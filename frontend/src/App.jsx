@@ -486,21 +486,21 @@ export default function App() {
   useEffect(() => {
     fetchLayouts();
 
-    // Cycle statuses and percentages every 420ms
+    // Cycle statuses and percentages every 650ms for a slower, high-fidelity experience
     const statusInterval = setInterval(() => {
       setLoadingStatusIndex(prev => {
         if (prev < LOADING_STATUSES.length - 1) {
           return prev + 1;
         } else {
           clearInterval(statusInterval);
-          // Once 100% is reached, wait 300ms and fade out the preloader!
+          // Once 100% is reached, wait 350ms and fade out the preloader!
           setTimeout(() => {
             setIsLoading(false);
-          }, 300);
+          }, 350);
           return prev;
         }
       });
-    }, 420);
+    }, 650);
 
     // Parse encoded share link state on component mount
     try {
