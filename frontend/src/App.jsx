@@ -486,15 +486,21 @@ export default function App() {
   useEffect(() => {
     fetchLayouts();
 
-    // Cycle statuses
+    // Cycle statuses and percentages every 420ms
     const statusInterval = setInterval(() => {
-      setLoadingStatusIndex(prev => (prev < LOADING_STATUSES.length - 1 ? prev + 1 : prev));
-    }, 400);
-
-    const loadTimer = setTimeout(() => {
-      setIsLoading(false);
-      clearInterval(statusInterval);
-    }, 2400);
+      setLoadingStatusIndex(prev => {
+        if (prev < LOADING_STATUSES.length - 1) {
+          return prev + 1;
+        } else {
+          clearInterval(statusInterval);
+          // Once 100% is reached, wait 300ms and fade out the preloader!
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 300);
+          return prev;
+        }
+      });
+    }, 420);
 
     // Parse encoded share link state on component mount
     try {
@@ -519,7 +525,6 @@ export default function App() {
     }
 
     return () => {
-      clearTimeout(loadTimer);
       clearInterval(statusInterval);
     };
   }, []);
@@ -1028,22 +1033,68 @@ export default function App() {
     : (selectedRoomFolder ? FURNITURE_ITEMS.filter(item => item.rooms.includes(selectedRoomFolder)) : (selectedCategory ? FURNITURE_ITEMS.filter(item => item.category === selectedCategory) : []));
 
   if (isLoading) {
+    const pcts = [8, 28, 52, 72, 90, 100];
+    const currentPct = pcts[loadingStatusIndex] !== undefined ? pcts[loadingStatusIndex] : 100;
+
     return (
-      <div className="planora-preloader-container">
-        <div className="preloader-glass-card">
-          <div className="preloader-logo-ring">
-            <div className="preloader-glowing-circle" />
-            <Home size={38} className="preloader-house-icon" style={{ zIndex: '2' }} />
+      <div className="plr">
+        <div className="plr-grid"></div>
+        <div className="plr-vig"></div>
+
+        <div className="plr-corner tl"></div>
+        <div className="plr-corner tr"></div>
+        <div className="plr-corner bl"></div>
+        <div className="plr-corner br"></div>
+
+        {/* floating particles */}
+        <div className="plr-particle" style={{ width: '3px', height: '3px', left: '13%', top: '24%', opacity: 0.18, animationDuration: '4.2s', animationDelay: '0s' }}></div>
+        <div className="plr-particle" style={{ width: '4px', height: '4px', left: '81%', top: '16%', opacity: 0.14, animationDuration: '5.1s', animationDelay: '0.6s' }}></div>
+        <div className="plr-particle" style={{ width: '3px', height: '3px', left: '56%', top: '76%', opacity: 0.2, animationDuration: '3.8s', animationDelay: '1.1s' }}></div>
+        <div className="plr-particle" style={{ width: '2px', height: '2px', left: '26%', top: '64%', opacity: 0.12, animationDuration: '4.7s', animationDelay: '1.6s' }}></div>
+        <div className="plr-particle" style={{ width: '4px', height: '4px', left: '71%', top: '54%', opacity: 0.16, animationDuration: '3.5s', animationDelay: '0.9s' }}></div>
+        <div className="plr-particle" style={{ width: '2px', height: '2px', left: '42%', top: '9%', opacity: 0.1, animationDuration: '5.3s', animationDelay: '0.3s' }}></div>
+        <div className="plr-particle" style={{ width: '3px', height: '3px', left: '88%', top: '72%', opacity: 0.15, animationDuration: '4s', animationDelay: '2s' }}></div>
+        <div className="plr-particle" style={{ width: '2px', height: '2px', left: '7%', top: '83%', opacity: 0.13, animationDuration: '4.9s', animationDelay: '1.3s' }}></div>
+
+        <div className="plr-card">
+          {/* orbit system */}
+          <div className="plr-orbit">
+            <div className="plr-ring1"></div>
+            <div className="plr-ring2"></div>
+            <div className="plr-ring3"></div>
+            <div className="plr-orb1"></div>
+            <div className="plr-orb2"></div>
+            <div className="plr-orb3"></div>
+            <div className="plr-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 10.5L12 3l9 7.5V21H15v-5H9v5H3V10.5z"/>
+                <path d="M9 16h6" strokeOpacity=".45"/>
+              </svg>
+            </div>
           </div>
-          <h2 className="preloader-brand-title">Planora</h2>
-          <p className="preloader-subtitle">Spatial Layout Planner</p>
-          
-          <div className="preloader-progress-track">
-            <div className="preloader-progress-fill" style={{ width: `${((loadingStatusIndex + 1) / LOADING_STATUSES.length) * 100}%` }} />
+
+          <div className="plr-brand">Planora</div>
+          <div className="plr-tag">Spatial Layout Planner</div>
+
+          <div className="plr-track">
+            <div className="plr-fill" style={{ width: `${currentPct}%` }}></div>
           </div>
-          
-          <div className="preloader-status-text">
-            {LOADING_STATUSES[loadingStatusIndex]}
+
+          <div className="plr-pct">
+            <span>Loading assets</span>
+            <span>{currentPct}%</span>
+          </div>
+
+          <div className="plr-status">
+            <span key={loadingStatusIndex} style={{ display: 'block', animation: 'pl-status-swap .45s ease both' }}>
+              {LOADING_STATUSES[loadingStatusIndex]}
+            </span>
+          </div>
+
+          <div className="plr-dots">
+            <div className="plr-dot"></div>
+            <div className="plr-dot"></div>
+            <div className="plr-dot"></div>
           </div>
         </div>
       </div>
