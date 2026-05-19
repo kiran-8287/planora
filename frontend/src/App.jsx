@@ -5,7 +5,7 @@ import {
   Eye, Heart, Trash2, RotateCw, PlusCircle, HelpCircle, 
   ExternalLink, Locate, Plus, Minus, MapPin, Sparkles, CheckCircle2,
   Copy, Download, Printer, ChevronDown, Palette, SlidersHorizontal,
-  FileDown, Link2, RefreshCw, Shuffle
+  FileDown, Link2, RefreshCw, Shuffle, Box, Ruler, ShoppingCart
 } from 'lucide-react';
 
 const GRID_SIZE = 20;
@@ -54,6 +54,93 @@ const MISC_CATEGORIES = [
   { id: 'holidays', name: 'Holidays', icon: (color) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.886h6.186L12 3Z" /><path d="M12 19v3" /></svg> },
   { id: 'pets', name: 'Pets', icon: (color) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="12" r="3" /></svg> }
 ];
+
+const PREMIUM_ROOM_LAYOUTS = {
+  living: [
+    { type: 'sofa', name: 'Luxury Sofa', emoji: '🛋', width: 180, height: 90, depth: 90, elevation: 0, x: 360, y: 140, rotation: 0, color: '#2563EB' },
+    { type: 'coffee_table', name: 'Round Coffee Table', emoji: '☕', width: 90, height: 90, depth: 90, elevation: 0, x: 405, y: 270, rotation: 0, color: '#FFFFFF' },
+    { type: 'armchair', name: 'Lounge Armchair', emoji: '🪑', width: 90, height: 90, depth: 90, elevation: 0, x: 220, y: 270, rotation: 90, color: '#FED7AA' },
+    { type: 'chair', name: 'Egg Accent Chair', emoji: '🪑', width: 85, height: 85, depth: 85, elevation: 0, x: 600, y: 270, rotation: 270, color: '#A7F3D0' },
+    { type: 'tv_console', name: 'TV Cabinet Console', emoji: '📺', width: 180, height: 50, depth: 50, elevation: 0, x: 360, y: 480, rotation: 0, color: '#1E293B' },
+    { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, depth: 60, elevation: 0, x: 80, y: 80, rotation: 0, color: '#16A34A' },
+    { type: 'floor_lamp', name: 'Floor Lamp', emoji: '💡', width: 60, height: 60, depth: 60, elevation: 0, x: 760, y: 80, rotation: 0, color: '#FDE68A' },
+    { type: 'circular_rug', name: 'Circular Velvet Rug', emoji: '⭕', width: 160, height: 160, depth: 160, elevation: 0, x: 370, y: 240, rotation: 0, color: '#DDD6FE' },
+    { type: 'window_curtain', name: 'Elegant Window Drapes', emoji: '🪟', width: 120, height: 12, depth: 12, elevation: 0, x: 390, y: 0, rotation: 0, color: '#FFFFFF' }
+  ],
+  bedroom: [
+    { type: 'bed', name: 'King-Size Bed', emoji: '🛏', width: 200, height: 180, depth: 180, elevation: 0, x: 300, y: 80, rotation: 0, color: '#BFDBFE' },
+    { type: 'nightstand', name: 'Oak Nightstand', emoji: '🗄', width: 60, height: 50, depth: 50, elevation: 0, x: 220, y: 80, rotation: 0, color: '#D7B58B' },
+    { type: 'nightstand', name: 'Oak Nightstand', emoji: '🗄', width: 60, height: 50, depth: 50, elevation: 0, x: 520, y: 80, rotation: 0, color: '#D7B58B' },
+    { type: 'reading_lamp', name: 'Reading Lamp', emoji: '💡', width: 50, height: 50, depth: 50, elevation: 0, x: 225, y: 80, rotation: 0, color: '#FDE68A' },
+    { type: 'reading_lamp', name: 'Reading Lamp', emoji: '💡', width: 50, height: 50, depth: 50, elevation: 0, x: 525, y: 80, rotation: 0, color: '#FDE68A' },
+    { type: 'wardrobe', name: 'Sliding Wardrobe', emoji: '🚪', width: 160, height: 60, depth: 60, elevation: 0, x: 80, y: 200, rotation: 90, color: '#8B5A2B' },
+    { type: 'dresser', name: 'Vanity Dresser', emoji: '🪞', width: 100, height: 50, depth: 50, elevation: 0, x: 620, y: 200, rotation: 270, color: '#D7B58B' },
+    { type: 'circular_rug', name: 'Cozy Sheepskin Rug', emoji: '🐑', width: 110, height: 80, depth: 80, elevation: 0, x: 345, y: 280, rotation: 0, color: '#FFFFFF' },
+    { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, depth: 60, elevation: 0, x: 640, y: 460, rotation: 0, color: '#16A34A' },
+    { type: 'armchair', name: 'Velvet Recliner', emoji: '🪑', width: 95, height: 95, depth: 95, elevation: 0, x: 100, y: 420, rotation: 45, color: '#FED7AA' }
+  ],
+  kitchen: [
+    { type: 'island', name: 'Kitchen Island', emoji: '🍳', width: 200, height: 100, depth: 100, elevation: 0, x: 300, y: 260, rotation: 0, color: '#FFFFFF' },
+    { type: 'stool', name: 'Bar Stool', emoji: '🪑', width: 50, height: 50, depth: 50, elevation: 0, x: 340, y: 380, rotation: 0, color: '#1E293B' },
+    { type: 'stool', name: 'Bar Stool', emoji: '🪑', width: 50, height: 50, depth: 50, elevation: 0, x: 410, y: 380, rotation: 0, color: '#1E293B' },
+    { type: 'counter', name: 'Kitchen Counter', emoji: '🍳', width: 160, height: 60, depth: 60, elevation: 0, x: 120, y: 80, rotation: 0, color: '#D7B58B' },
+    { type: 'sink', name: 'Sink Unit', emoji: '𚰰', width: 100, height: 60, depth: 60, elevation: 0, x: 280, y: 80, rotation: 0, color: '#BFDBFE' },
+    { type: 'fridge', name: 'Oven & Hob', emoji: '🔥', width: 75, height: 75, depth: 75, elevation: 0, x: 380, y: 80, rotation: 0, color: '#DC2626' },
+    { type: 'fridge', name: 'Refrigerator', emoji: '🧊', width: 85, height: 80, depth: 80, elevation: 0, x: 600, y: 80, rotation: 0, color: '#FFFFFF' },
+    { type: 'wardrobe', name: 'Pantry Cabinet', emoji: '🥫', width: 90, height: 60, depth: 60, elevation: 0, x: 600, y: 200, rotation: 270, color: '#8B5A2B' },
+    { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, depth: 60, elevation: 0, x: 80, y: 380, rotation: 0, color: '#16A34A' }
+  ],
+  kids: [
+    { type: 'kids_bed', name: 'Kids Bunk Bed', emoji: '𛲏', width: 160, height: 95, depth: 95, elevation: 0, x: 80, y: 60, rotation: 0, color: '#A7F3D0' },
+    { type: 'play_desk', name: 'Kids Play Desk', emoji: '💻', width: 100, height: 55, depth: 55, elevation: 0, x: 420, y: 60, rotation: 0, color: '#FDE68A' },
+    { type: 'little_chair', name: 'Little Chair', emoji: '𛲑', width: 50, height: 50, depth: 50, elevation: 0, x: 445, y: 130, rotation: 180, color: '#FED7AA' },
+    { type: 'toy_cabinet', name: 'Toy Cabinet', emoji: '𗚄', width: 90, height: 45, depth: 45, elevation: 0, x: 520, y: 220, rotation: 270, color: '#FBCFE8' },
+    { type: 'circular_rug', name: 'Circular Velvet Rug', emoji: '⭕', width: 160, height: 160, depth: 160, elevation: 0, x: 240, y: 220, rotation: 0, color: '#DDD6FE' },
+    { type: 'ottoman', name: 'Round Knit Pouf', emoji: '🧶', width: 55, height: 55, depth: 55, elevation: 0, x: 140, y: 320, rotation: 0, color: '#FED7AA' },
+    { type: 'circular_rug', name: 'Cozy Sheepskin Rug', emoji: '🐑', width: 110, height: 80, depth: 80, elevation: 0, x: 105, y: 180, rotation: 0, color: '#FFFFFF' },
+    { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, depth: 60, elevation: 0, x: 80, y: 380, rotation: 0, color: '#16A34A' }
+  ],
+  bathroom: [
+    { type: 'tub', name: 'Freestanding Tub', emoji: '🛁', width: 170, height: 80, depth: 80, elevation: 0, x: 60, y: 60, rotation: 0, color: '#BFDBFE' },
+    { type: 'shower', name: 'Shower Cabin', emoji: '🚿', width: 100, height: 100, depth: 100, elevation: 0, x: 440, y: 60, rotation: 0, color: '#FFFFFF' },
+    { type: 'sink', name: 'Double Sink', emoji: '𚰰', width: 120, height: 50, depth: 50, elevation: 0, x: 60, y: 360, rotation: 180, color: '#FFFFFF' },
+    { type: 'stool', name: 'Toilet Suite', emoji: '🚽', width: 50, height: 70, depth: 70, elevation: 0, x: 440, y: 340, rotation: 180, color: '#FFFFFF' },
+    { type: 'mirror', name: 'Full Mirror Wall', emoji: '𛲞', width: 110, height: 10, depth: 10, elevation: 0, x: 65, y: 420, rotation: 180, color: '#FFFFFF' },
+    { type: 'wardrobe', name: 'Linen Closet', emoji: '🧺', width: 80, height: 45, depth: 45, elevation: 0, x: 280, y: 360, rotation: 180, color: '#D7B58B' },
+    { type: 'ottoman', name: 'Robovac Dock', emoji: '🧹', width: 45, height: 45, depth: 45, elevation: 0, x: 360, y: 360, rotation: 0, color: '#1E293B' }
+  ],
+  dining: [
+    { type: 'dining_table', name: 'Dining Oak Table', emoji: '🍽', width: 180, height: 100, depth: 100, elevation: 0, x: 310, y: 220, rotation: 0, color: '#8B5A2B' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 340, y: 140, rotation: 0, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 400, y: 140, rotation: 0, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 340, y: 340, rotation: 180, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 400, y: 340, rotation: 180, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 230, y: 240, rotation: 90, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 510, y: 240, rotation: 270, color: '#FED7AA' },
+    { type: 'cabinet', name: 'Credenza Sideboard', emoji: '𗚄', width: 150, height: 45, depth: 45, elevation: 0, x: 325, y: 40, rotation: 0, color: '#8B5A2B' },
+    { type: 'circular_rug', name: 'Persian Area Rug', emoji: '𗎴', width: 220, height: 160, depth: 160, elevation: 0, x: 290, y: 190, rotation: 0, color: '#DC2626' },
+    { type: 'lamp', name: 'Chandelier', emoji: '🔱', width: 80, height: 80, depth: 80, elevation: 0, x: 360, y: 230, rotation: 0, color: '#FDE68A' },
+    { type: 'floor_plant', name: 'Fiddle Leaf Fig Tree', emoji: '🌳', width: 70, height: 70, depth: 70, elevation: 0, x: 640, y: 60, rotation: 0, color: '#16A34A' }
+  ],
+  office: [
+    { type: 'writing_desk', name: 'Office Desk', emoji: '💻', width: 140, height: 75, depth: 75, elevation: 0, x: 330, y: 220, rotation: 0, color: '#8B5A2B' },
+    { type: 'office_chair', name: 'Ergonomic Chair', emoji: '𛲑', width: 65, height: 65, depth: 65, elevation: 0, x: 367, y: 310, rotation: 0, color: '#1E293B' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 310, y: 140, rotation: 180, color: '#FED7AA' },
+    { type: 'chair', name: 'Designer Chair', emoji: '𛲑', width: 60, height: 60, depth: 60, elevation: 0, x: 430, y: 140, rotation: 180, color: '#FED7AA' },
+    { type: 'shelf', name: 'Bookcase Shelf', emoji: '📚', width: 120, height: 35, depth: 35, elevation: 0, x: 340, y: 40, rotation: 0, color: '#8B5A2B' },
+    { type: 'storage', name: 'Filing Cabinet', emoji: '𗚄', width: 60, height: 50, depth: 50, elevation: 0, x: 100, y: 80, rotation: 90, color: '#475569' },
+    { type: 'chair', name: 'Nordic Club Chair', emoji: '𛲑', width: 80, height: 80, depth: 80, elevation: 0, x: 100, y: 420, rotation: 45, color: '#FED7AA' },
+    { type: 'floor_plant', name: 'Fiddle Leaf Fig Tree', emoji: '🌳', width: 70, height: 70, depth: 70, elevation: 0, x: 630, y: 80, rotation: 0, color: '#16A34A' },
+    { type: 'cabinet', name: 'Hi-Fi Audio Tower', emoji: '🔊', width: 70, height: 60, depth: 60, elevation: 0, x: 630, y: 440, rotation: 0, color: '#1E293B' },
+    { type: 'lamp', name: 'Standing Air Fan', emoji: '🌀', width: 50, height: 50, depth: 50, elevation: 0, x: 100, y: 240, rotation: 0, color: '#475569' }
+  ],
+  hallway: [
+    { type: 'circular_rug', name: 'Geometric Corridor Runner', emoji: '🏁', width: 240, height: 80, depth: 80, elevation: 0, x: 130, y: 310, rotation: 0, color: '#1E293B' },
+    { type: 'ottoman', name: 'Storage Bench', emoji: '𗚄', width: 120, height: 50, depth: 50, elevation: 0, x: 190, y: 220, rotation: 0, color: '#D7B58B' },
+    { type: 'wardrobe', name: 'Sliding Wardrobe', emoji: '🚪', width: 160, height: 60, depth: 60, elevation: 0, x: 170, y: 40, rotation: 0, color: '#8B5A2B' },
+    { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, depth: 60, elevation: 0, x: 40, y: 220, rotation: 0, color: '#16A34A' }
+  ]
+};
 
 const ALL_CATALOG_FOLDERS = [
   ...FURNISH_CATEGORIES,
@@ -511,6 +598,18 @@ export default function App() {
 
   // Zoom factor & Minimap
   const [zoom, setZoom] = useState(1);
+  const [is3DMode, setIs3DMode] = useState(false);
+  const [isMeasuring, setIsMeasuring] = useState(false);
+  const [measureStart, setMeasureStart] = useState(null);
+  const [measureEnd, setMeasureEnd] = useState(null);
+  const [showBOMDrawer, setShowBOMDrawer] = useState(false);
+  const [bomItemCosts, setBomItemCosts] = useState({});
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null
+  });
   const [showMinimap, setShowMinimap] = useState(true);
   const [minimapPos, setMinimapPos] = useState({ x: null, y: null });
 
@@ -718,23 +817,18 @@ export default function App() {
     }, 3000);
   };
 
-  // ── SNAPSHOT: uses html2canvas-like approach via canvas API ──
-  const handleSnapshot = () => {
-    const el = document.getElementById('room-blueprint-canvas');
-    if (!el) { addToast('Canvas not found', 'error'); return; }
-    import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js').then(() => {
-      window.html2canvas(el, { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `${floorName.replace(/\s+/g, '_')}_snapshot.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        addToast('Snapshot saved as PNG!', 'success');
-      });
-    }).catch(() => {
-      // Fallback: open print dialog for the canvas
-      addToast('Opening print dialog for snapshot...', 'info');
-      window.print();
+  const triggerConfirm = (title, message, onConfirmCallback) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: onConfirmCallback
     });
+  };
+
+  // ── SNAPSHOT: uses high-fidelity offscreen Canvas exporter ──
+  const handleSnapshot = () => {
+    handleExportSnapshot();
   };
 
   // ── SHARE: generate a sharable URL with layout state encoded ──
@@ -757,8 +851,13 @@ export default function App() {
 
   // ── EXPORT PDF: print the canvas area ──
   const handleExportPDF = () => {
-    addToast('Preparing PDF export...', 'info');
-    setTimeout(() => window.print(), 400);
+    addToast('Opening print preview for PDF export...', 'info');
+    const originalTitle = document.title;
+    document.title = `Planora_${floorName.replace(/\s+/g, '_')}_Layout`;
+    window.print();
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
   };
 
   // ── RECENTER: reset zoom and scroll canvas to center ──
@@ -1153,6 +1252,247 @@ export default function App() {
     addToast(`Initialized ${tpl.name} layout blueprint`, 'success');
   };
 
+  const handleCreateRoomLayout = (folderId, loadTemplate = false) => {
+    saveHistoryState();
+    const folder = ROOM_FOLDERS.find(f => f.id === folderId);
+    if (!folder) return;
+    
+    const existingCount = rooms.filter(r => r.id.startsWith(folderId)).length;
+    const newRoomId = `${folderId}_${Date.now()}`;
+    const newRoomName = existingCount > 0 ? `${folder.name} ${existingCount + 1}` : folder.name;
+
+    let w = 900;
+    let h = 600;
+    if (folderId === 'kitchen') { w = 800; h = 540; }
+    else if (folderId === 'bedroom') { w = 800; h = 600; }
+    else if (folderId === 'kids') { w = 700; h = 500; }
+    else if (folderId === 'bathroom') { w = 600; h = 480; }
+    else if (folderId === 'dining') { w = 800; h = 540; }
+    else if (folderId === 'hallway') { w = 500; h = 700; }
+    else if (folderId === 'office') { w = 800; h = 600; }
+
+    const newRoom = { id: newRoomId, name: newRoomName, width: w, height: h };
+    setRooms(prev => [...prev, newRoom]);
+    setActiveRoomId(newRoomId);
+    setRoomWidth(w);
+    setRoomHeight(h);
+    setSelectedId(null);
+
+    if (loadTemplate && PREMIUM_ROOM_LAYOUTS[folderId]) {
+      const templateItems = PREMIUM_ROOM_LAYOUTS[folderId].map((tplItem, idx) => ({
+        ...tplItem,
+        id: `item_${Date.now()}_${idx}`,
+        roomId: newRoomId,
+        zIndex: items.length + idx + 1
+      }));
+      setItems(prev => [...prev, ...templateItems]);
+      addToast(`Initialized fully furnished ${newRoomName} design layout!`, 'success');
+    } else {
+      addToast(`Added blank ${newRoomName} section!`, 'success');
+    }
+  };
+
+  const handleDeleteRoom = (roomId, e) => {
+    if (e) e.stopPropagation();
+    if (rooms.length <= 1) {
+      addToast('Cannot delete the last remaining room section!', 'warning');
+      return;
+    }
+    const targetRoom = rooms.find(r => r.id === roomId);
+    triggerConfirm(
+      'Remove Room Layout?',
+      `Are you sure you want to delete "${targetRoom?.name || 'this room'}" permanently? All furniture items placed in this room will also be removed.`,
+      () => {
+        // Save history state first
+        saveHistoryState();
+        
+        // Remove all items belonging to this room
+        setItems(prev => prev.filter(item => item.roomId !== roomId && (item.roomId || roomId !== 'room_1')));
+        
+        // Remove the room itself
+        const remainingRooms = rooms.filter(r => r.id !== roomId);
+        setRooms(remainingRooms);
+        
+        // If the active room was deleted, switch active room to the first remaining one
+        if (activeRoomId === roomId) {
+          const nextActiveRoom = remainingRooms[0];
+          setActiveRoomId(nextActiveRoom.id);
+          setRoomWidth(nextActiveRoom.width);
+          setRoomHeight(nextActiveRoom.height);
+        }
+        
+        addToast(`Successfully removed "${targetRoom?.name}" and its furniture items.`, 'info');
+      }
+    );
+  };
+
+  const handleExportSnapshot = () => {
+    const activeRoom = rooms.find(r => r.id === activeRoomId);
+    if (!activeRoom) {
+      addToast('No active room section to export!', 'warning');
+      return;
+    }
+
+    addToast('Generating high-res floor plan snapshot...', 'info');
+
+    // Create an off-screen canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Scale up the canvas size for sharp, high-res prints (2x multiplier)
+    const scale = 2;
+    canvas.width = roomWidth * scale;
+    canvas.height = roomHeight * scale;
+    
+    ctx.scale(scale, scale);
+
+    // 1. Draw solid background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, roomWidth, roomHeight);
+
+    // 2. Draw dot grid background (similar to Planora premium canvas)
+    if (showGridDots) {
+      ctx.fillStyle = '#CBD5E1';
+      const dotSpacing = 20;
+      for (let x = dotSpacing; x < roomWidth; x += dotSpacing) {
+        for (let y = dotSpacing; y < roomHeight; y += dotSpacing) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.2, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+    }
+
+    // 3. Draw architectural double-border outer walls
+    ctx.strokeStyle = '#0F172A'; // Dark navy walls
+    ctx.lineWidth = 6;
+    ctx.strokeRect(0, 0, roomWidth, roomHeight);
+    
+    ctx.strokeStyle = '#E2E8F0'; // Inner wall lining
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(3, 3, roomWidth - 6, roomHeight - 6);
+
+    // 4. Render layout items (sorted by z-index to maintain correct layer overlaps)
+    const activeRoomItems = items
+      .filter(item => item.roomId === activeRoomId || (!item.roomId && activeRoomId === 'room_1'))
+      .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+
+    activeRoomItems.forEach(item => {
+      ctx.save();
+      
+      // Move coordinates to the center of the item
+      const cx = item.x + item.width / 2;
+      const cy = item.y + item.height / 2;
+      ctx.translate(cx, cy);
+      
+      // Rotate context
+      if (item.rotation) {
+        ctx.rotate((item.rotation * Math.PI) / 180);
+      }
+
+      const itemColor = item.color || '#BFDBFE';
+      
+      // Draw dynamic item shadow
+      ctx.shadowColor = 'rgba(15, 23, 42, 0.08)';
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 3;
+
+      // Draw custom visual based on furniture type
+      if (item.type === 'circular_rug' || item.name.toLowerCase().includes('rug')) {
+        // Draw round rug overlays
+        ctx.fillStyle = hexToRgba(itemColor, 0.35);
+        ctx.strokeStyle = itemColor;
+        ctx.lineWidth = 2.5;
+        
+        ctx.beginPath();
+        if (item.type === 'circular_rug') {
+          ctx.arc(0, 0, Math.min(item.width, item.height) / 2, 0, 2 * Math.PI);
+        } else {
+          // Rounded rect for rectangular carpets
+          ctx.roundRect(-item.width / 2, -item.height / 2, item.width, item.height, 12);
+        }
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        // Standard furniture item: filled rounded card box
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = itemColor;
+        ctx.lineWidth = 3;
+        
+        ctx.beginPath();
+        ctx.roundRect(-item.width / 2, -item.height / 2, item.width, item.height, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw color accent stripe along the left edge
+        ctx.fillStyle = itemColor;
+        ctx.beginPath();
+        ctx.roundRect(-item.width / 2, -item.height / 2, 8, item.height, { tl: 8, bl: 8, tr: 0, br: 0 });
+        ctx.fill();
+      }
+
+      // 5. Draw element details (emoji and labeling text)
+      ctx.shadowColor = 'transparent'; // Reset shadows for text
+      
+      // Print item emoji icon
+      ctx.font = '22px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(item.emoji || '🪑', 0, -6);
+
+      // Print item name / label
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 9px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(item.name, 0, 18);
+
+      // Print metric sizing label (e.g. 180 x 90 cm)
+      ctx.fillStyle = '#64748B';
+      ctx.font = '7px monospace';
+      ctx.fillText(`${item.width}x${item.height} cm`, 0, 28);
+
+      ctx.restore();
+    });
+
+    // 5. Render room identification label
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+    ctx.font = 'bold 13px "Plus Jakarta Sans", sans-serif';
+    ctx.textAlign = 'left';
+    
+    const labelX = 20;
+    const labelY = roomHeight - 25;
+    ctx.fillText(`${activeRoom.name} Blueprint`, labelX, labelY);
+    
+    ctx.fillStyle = '#64748B';
+    ctx.font = '9px monospace';
+    ctx.fillText(`Scale Ratio 1:50 | ${roomWidth} x ${roomHeight} cm`, labelX, labelY + 12);
+
+    // 6. Trigger PNG file download
+    setTimeout(() => {
+      try {
+        const link = document.createElement('a');
+        link.download = `Planora_${floorName.replace(/\s+/g, '_')}_${activeRoom.name.replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        addToast('Snapshot downloaded successfully!', 'success');
+      } catch (err) {
+        console.error('Snapshot generation error:', err);
+        addToast('Failed to download image snapshot.', 'danger');
+      }
+    }, 100);
+  };
+
+  // Helper utility to convert hex colors to transparent RGBA format
+  const hexToRgba = (hex, alpha) => {
+    let c = hex.substring(1);
+    if (c.length === 3) {
+      c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
+    }
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
   // Persistent save
   const handleSaveLayout = async () => {
     // Sync current floor states to floors list first
@@ -1302,19 +1642,23 @@ export default function App() {
 
   const handleDeleteSavedLayout = async (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('Delete this layout record permanently?')) return;
-
-    try {
-      const response = await fetch(`/api/layouts/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        addToast('State removed successfully', 'info');
-        if (currentLayoutId === id) {
-          setCurrentLayoutId(null);
-          setIsDirty(false);
-        }
-        fetchLayouts();
+    triggerConfirm(
+      'Delete Saved Design?',
+      'Are you sure you want to delete this custom room design permanently? This cannot be undone.',
+      async () => {
+        try {
+          const response = await fetch(`/api/layouts/${id}`, { method: 'DELETE' });
+          if (response.ok) {
+            addToast('State removed successfully', 'info');
+            if (currentLayoutId === id) {
+              setCurrentLayoutId(null);
+              setIsDirty(false);
+            }
+            fetchLayouts();
+          }
+        } catch (err) {}
       }
-    } catch (err) {}
+    );
   };
 
   // Scale calculations for dynamic metric rules
@@ -1530,6 +1874,32 @@ export default function App() {
           <button className="nav-tool-btn" onClick={handleSnapshot} title="Capture snapshot (PNG)"><Camera size={15} /></button>
           <button className="nav-tool-btn" onClick={handleShare} title="Share layout"><Share2 size={15} /></button>
           <button className="nav-tool-btn" onClick={() => setShowSettingsModal(true)} title="Settings"><Settings size={15} /></button>
+          
+          <button 
+            className={`nav-tool-btn ${is3DMode ? 'nav-tool-active' : ''}`} 
+            onClick={() => { setIs3DMode(!is3DMode); addToast(is3DMode ? '2D Flat mode active' : 'Isometric 3D mode active!', 'info'); }} 
+            title="Toggle Isometric 3D Mode"
+          ><Box size={15} /></button>
+          
+          <button 
+            className={`nav-tool-btn ${isMeasuring ? 'nav-tool-active' : ''}`} 
+            onClick={() => { 
+              setIsMeasuring(!isMeasuring); 
+              if (!isMeasuring) {
+                setMeasureStart(null);
+                setMeasureEnd(null);
+              }
+              addToast(isMeasuring ? 'Tape Measure deactivated' : 'Tape Measure activated! Click & drag to measure gaps.', 'info'); 
+            }} 
+            title="Tape Measure Tool"
+          ><Ruler size={15} /></button>
+
+          <button 
+            className={`nav-tool-btn ${showBOMDrawer ? 'nav-tool-active' : ''}`} 
+            onClick={() => setShowBOMDrawer(!showBOMDrawer)} 
+            title="Bill of Materials & Costs"
+          ><ShoppingCart size={15} /></button>
+
           <button 
             className={`nav-tool-btn ${showGridDots ? 'nav-tool-active' : ''}`} 
             onClick={() => { setShowGridDots(g => !g); addToast(showGridDots ? 'Grid hidden' : 'Grid visible', 'info'); }} 
@@ -1683,26 +2053,6 @@ export default function App() {
                           className="card-item"
                           onClick={() => {
                             setSelectedRoomFolder(folder.id);
-                            const existingCount = rooms.filter(r => r.id.startsWith(folder.id)).length;
-                            const newRoomId = `${folder.id}_${Date.now()}`;
-                            const newRoomName = existingCount > 0 ? `${folder.name} ${existingCount + 1}` : folder.name;
-                            
-                            let w = 900;
-                            let h = 600;
-                            if (folder.id === 'kitchen') { w = 800; h = 540; }
-                            else if (folder.id === 'bedroom') { w = 800; h = 600; }
-                            else if (folder.id === 'kids') { w = 700; h = 500; }
-                            else if (folder.id === 'bathroom') { w = 600; h = 480; }
-                            else if (folder.id === 'dining') { w = 800; h = 540; }
-                            else if (folder.id === 'hallway') { w = 500; h = 700; }
-                            else if (folder.id === 'office') { w = 800; h = 600; }
-                            
-                            const newRoom = { id: newRoomId, name: newRoomName, width: w, height: h };
-                            setRooms(prev => [...prev, newRoom]);
-                            setActiveRoomId(newRoomId);
-                            setRoomWidth(w);
-                            setRoomHeight(h);
-                            addToast(`Added ${newRoomName} section!`, 'success');
                           }}
                           style={{ animationDelay: `${idx * 40}ms` }}
                         >
@@ -1742,6 +2092,40 @@ export default function App() {
                     <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.5px' }}>
                       {searchQuery ? 'Search Results' : `${ROOM_FOLDERS.find(f => f.id === selectedRoomFolder)?.name} Furniture`}
                     </h3>
+
+                    {!searchQuery && selectedRoomFolder && (
+                      <div className="template-option-card">
+                        <div className="template-card-title">Create Room Space</div>
+                        <p className="template-card-subtitle">Choose a starting layout to place this room division</p>
+                        
+                        <div className="template-button-row">
+                          <button
+                            className="btn-template-choice blank"
+                            onClick={() => handleCreateRoomLayout(selectedRoomFolder, false)}
+                            title="Start with an empty floor plan grid"
+                          >
+                            <span className="btn-choice-icon">⬜</span>
+                            <div className="btn-choice-details">
+                              <span className="btn-choice-title">Blank Blueprint</span>
+                              <span className="btn-choice-desc">Empty workspace</span>
+                            </div>
+                          </button>
+                          
+                          <button
+                            className="btn-template-choice premium"
+                            onClick={() => handleCreateRoomLayout(selectedRoomFolder, true)}
+                            title="Pre-populate with a gorgeous furnished reference template"
+                          >
+                            <span className="btn-choice-icon">✨</span>
+                            <div className="btn-choice-details">
+                              <span className="btn-choice-title">Furnished Design</span>
+                              <span className="btn-choice-desc">Premium 2D template</span>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
 
                     <div className="cards-grid" style={{ marginBottom: '20px' }}>
                       {filteredCatalogItems.map((catalogItem, idx) => (
@@ -2045,13 +2429,47 @@ export default function App() {
             {/* Room Blueprint Canvas */}
             <div
               id="room-blueprint-canvas"
-              className={`room-box-premium ${selectedId ? 'unselected' : 'selected'} ${showGridDots ? 'grid-dots-active' : 'grid-dots-hidden'}`}
+              className={`room-box-premium ${selectedId ? 'unselected' : 'selected'} ${showGridDots ? 'grid-dots-active' : 'grid-dots-hidden'} ${is3DMode ? 'is-3d-view' : ''}`}
               style={{
                 width: `${roomWidth}px`,
                 height: `${roomHeight}px`,
-                borderColor: selectedId ? '#64748B' : roomBoundaryColor
+                borderColor: selectedId ? '#64748B' : roomBoundaryColor,
+                transform: is3DMode ? 'perspective(1000px) rotateX(60deg) rotateZ(-45deg)' : 'none',
+                transformStyle: is3DMode ? 'preserve-3d' : 'flat',
+                boxShadow: is3DMode ? '15px 15px 30px rgba(15, 23, 42, 0.25)' : 'none',
+                transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease',
+                cursor: isMeasuring ? 'crosshair' : 'default'
+              }}
+              onMouseDown={(e) => {
+                if (!isMeasuring) return;
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = (e.clientX - rect.left) / zoom;
+                const clickY = (e.clientY - rect.top) / zoom;
+                const sx = snap(clickX);
+                const sy = snap(clickY);
+                
+                setMeasureStart({ x: sx, y: sy });
+                setMeasureEnd({ x: sx, y: sy });
+                
+                const handleMouseMove = (moveEvent) => {
+                  const mx = (moveEvent.clientX - rect.left) / zoom;
+                  const my = (moveEvent.clientY - rect.top) / zoom;
+                  setMeasureEnd({ x: snap(mx), y: snap(my) });
+                };
+                
+                const handleMouseUp = () => {
+                  window.removeEventListener('mousemove', handleMouseMove);
+                  window.removeEventListener('mouseup', handleMouseUp);
+                };
+                
+                window.addEventListener('mousemove', handleMouseMove);
+                window.addEventListener('mouseup', handleMouseUp);
               }}
               onClick={(e) => {
+                if (isMeasuring) return;
                 if (e.target.id === 'room-blueprint-canvas') setSelectedId(null);
               }}
             >
@@ -2069,7 +2487,14 @@ export default function App() {
                       top: `${item.y}px`,
                       width: `${item.width}px`,
                       height: `${item.height}px`,
-                      transform: `rotate(${item.rotation || 0}deg)`,
+                      transform: is3DMode
+                        ? `rotate(${item.rotation || 0}deg) translate3d(0, 0, ${item.elevation || 0}px)`
+                        : `rotate(${item.rotation || 0}deg)`,
+                      transformStyle: is3DMode ? 'preserve-3d' : 'flat',
+                      boxShadow: is3DMode
+                        ? `0 1px 0 #CBD5E1, 0 2px 0 #94A3B8, 0 3px 0 #64748B, 0 4px 0 #475569, 0 ${4 + (item.elevation || 0)/10}px 10px rgba(15,23,42,0.25)`
+                        : 'none',
+                      transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease',
                       zIndex: item.zIndex || 1
                     }}
                     onMouseDown={(e) => handleMouseDown(e, item)}
@@ -2310,6 +2735,57 @@ export default function App() {
                 <span className="scale-text">&larr; 5 m &rarr;</span>
               </div>
 
+              {/* INTERACTIVE TAPE MEASURE OVERLAY */}
+              {isMeasuring && measureStart && measureEnd && (
+                <svg 
+                  className="measure-vector-overlay" 
+                  style={{ 
+                    position: 'absolute', 
+                    left: 0, 
+                    top: 0, 
+                    width: '100%', 
+                    height: '100%', 
+                    pointerEvents: 'none', 
+                    zIndex: 99999 
+                  }}
+                >
+                  <line 
+                    x1={measureStart.x} 
+                    y1={measureStart.y} 
+                    x2={measureEnd.x} 
+                    y2={measureEnd.y} 
+                    stroke="#EF4444" 
+                    strokeWidth="2.5" 
+                    strokeDasharray="6,4" 
+                  />
+                  <circle cx={measureStart.x} cy={measureStart.y} r="5" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <circle cx={measureEnd.x} cy={measureEnd.y} r="5" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
+                  
+                  <foreignObject
+                    x={(measureStart.x + measureEnd.x) / 2 - 40}
+                    y={(measureStart.y + measureEnd.y) / 2 - 14}
+                    width="80"
+                    height="28"
+                  >
+                    <div style={{
+                      background: '#EF4444',
+                      color: '#FFFFFF',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      padding: '3px 6px',
+                      borderRadius: '4px',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                      border: '1px solid #FFFFFF',
+                      whiteSpace: 'nowrap',
+                      fontFamily: '"Plus Jakarta Sans", sans-serif'
+                    }}>
+                      {(Math.sqrt(Math.pow(measureEnd.x - measureStart.x, 2) + Math.pow(measureEnd.y - measureStart.y, 2)) / 100).toFixed(2)} m
+                    </div>
+                  </foreignObject>
+                </svg>
+              )}
+
             </div>
           </div>
         )}
@@ -2469,14 +2945,40 @@ export default function App() {
           onClick={e => e.stopPropagation()}
         >
           {rooms.map(r => (
-            <button
-              key={r.id}
+            <div 
+              key={r.id} 
               className={`floating-room-tab ${activeRoomId === r.id ? 'active' : ''}`}
               onClick={() => handleSwitchRoomTab(r.id)}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', position: 'relative' }}
             >
-              {r.name}
+              <span>{r.name}</span>
               <span className="room-tab-badge">&bull; {items.filter(item => item.roomId === r.id || (!item.roomId && r.id === 'room_1')).length}</span>
-            </button>
+              
+              {rooms.length > 1 && (
+                <button
+                  className="room-tab-delete-btn"
+                  onClick={(e) => handleDeleteRoom(r.id, e)}
+                  title={`Delete ${r.name}`}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: '2px',
+                    color: 'rgba(239, 68, 68, 0.65)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                    transition: 'all 0.15s ease',
+                    marginLeft: '2px'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.color = 'rgba(239, 68, 68, 0.65)'; e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <X size={11} />
+                </button>
+              )}
+            </div>
           ))}
           <button 
             className="floating-room-add-btn" 
@@ -2801,6 +3303,92 @@ export default function App() {
         </div>
       )}
 
+      {/* BILL OF MATERIALS & COST ESTIMATOR DRAWER */}
+      {showBOMDrawer && (
+        <div className="bom-drawer-backdrop" onClick={() => setShowBOMDrawer(false)}>
+          <div className="bom-drawer-card" onClick={e => e.stopPropagation()}>
+            <div className="bom-drawer-header">
+              <div className="bom-header-title-cluster">
+                <ShoppingCart className="bom-header-icon" size={18} />
+                <h3>Bill of Materials & Cost Estimator</h3>
+              </div>
+              <button className="btn-modal-close" onClick={() => setShowBOMDrawer(false)}><X size={18} /></button>
+            </div>
+            
+            <div className="bom-drawer-content">
+              {items.filter(item => !item.roomId || item.roomId === activeRoomId).length === 0 ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <ShoppingCart size={40} style={{ opacity: 0.15, marginBottom: '12px' }} />
+                  <p style={{ fontSize: '13px' }}>Your active room floor plan is empty!</p>
+                  <p style={{ fontSize: '11px', marginTop: '4px' }}>Add catalog elements to populate the Bill of Materials.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="bom-table-wrapper">
+                    <table className="bom-table">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Category</th>
+                          <th>Dimensions (WxD)</th>
+                          <th style={{ textAlign: 'right' }}>Est. Cost ($)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {items
+                          .filter(item => !item.roomId || item.roomId === activeRoomId)
+                          .map(item => {
+                            const cost = bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120;
+                            return (
+                              <tr key={item.id}>
+                                <td>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '16px' }}>{item.emoji || '🪑'}</span>
+                                    <span style={{ fontWeight: 600 }}>{item.name}</span>
+                                  </div>
+                                </td>
+                                <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{item.type || 'Furniture'}</td>
+                                <td style={{ fontSize: '11px', fontFamily: 'monospace' }}>{item.width} x {item.height} cm</td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <input 
+                                    type="number"
+                                    className="bom-cost-input"
+                                    value={cost}
+                                    onChange={(e) => {
+                                      const nextCosts = { ...bomItemCosts, [item.id]: parseFloat(e.target.value) || 0 };
+                                      setBomItemCosts(nextCosts);
+                                    }}
+                                  />
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="bom-footer-summary">
+                    <div className="bom-summary-row">
+                      <span>Total Elements Quantity:</span>
+                      <span style={{ fontWeight: 700 }}>{items.filter(item => !item.roomId || item.roomId === activeRoomId).length} items</span>
+                    </div>
+                    <div className="bom-summary-row highlight">
+                      <span>Estimated Grand Budget:</span>
+                      <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                        ${items
+                          .filter(item => !item.roomId || item.roomId === activeRoomId)
+                          .reduce((sum, item) => sum + (bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120), 0)
+                          .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* SHARE PROJECT LINK MODAL */}
       {showShareModal && (
         <div className="modal-backdrop-blur" onClick={() => setShowShareModal(false)}>
@@ -2829,6 +3417,61 @@ export default function App() {
                   style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: '600', padding: '6px 12px', borderRadius: '6px', height: '30px' }}
                 >
                   {shareLinkCopied ? 'Copied!' : 'Copy Link'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* PREMIUM CUSTOM CONFIRMATION OVERLAY MODAL */}
+      {confirmModal.isOpen && (
+        <div className="modal-backdrop-blur" onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}>
+          <div className="shortcuts-modal-box confirm-modal-box" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div className="modal-title-row" style={{ borderBottom: 'none', paddingBottom: '0' }}>
+              <h3 style={{ color: '#EF4444' }}>{confirmModal.title || 'Are you sure?'}</h3>
+              <button className="btn-modal-close" onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}><X size={18} /></button>
+            </div>
+            
+            <div style={{ padding: '12px 24px 20px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
+                {confirmModal.message}
+              </p>
+              
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button 
+                  className="btn-layout-action"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  style={{
+                    background: '#F1F5F9',
+                    color: '#475569',
+                    border: '1px solid #E2E8F0',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    if (confirmModal.onConfirm) confirmModal.onConfirm();
+                    setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                  }}
+                  style={{
+                    background: '#EF4444',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.25)'
+                  }}
+                >
+                  Confirm Delete
                 </button>
               </div>
             </div>
