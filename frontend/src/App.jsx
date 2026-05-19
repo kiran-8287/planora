@@ -604,6 +604,7 @@ export default function App() {
   const [measureEnd, setMeasureEnd] = useState(null);
   const [showBOMDrawer, setShowBOMDrawer] = useState(false);
   const [bomItemCosts, setBomItemCosts] = useState({});
+  const [bomActiveTab, setBomActiveTab] = useState('total');
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     title: '',
@@ -2033,6 +2034,12 @@ export default function App() {
             >
               Categories
             </button>
+            <button 
+              className={`sidebar-tab-btn ${activeTab === 'Saved' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('Saved'); setSelectedRoomFolder(null); setSelectedCategory(null); }}
+            >
+              Saved
+            </button>
           </div>
 
 
@@ -2147,7 +2154,7 @@ export default function App() {
                   </div>
                 )}
               </div>
-            ) : (
+            ) : activeTab === 'Categories' ? (
               <div>
                 {!searchQuery && !selectedCategory ? (
                   <div>
@@ -2281,24 +2288,25 @@ export default function App() {
                     </div>
                   </div>
                 )}
-
-                <div className="vertical-divider" style={{ width: '100%', height: '1px', background: '#F1F5F9', margin: '16px 0' }} />
-                
-                {/* Persistence List inside Furnish drawer */}
-                <h3 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                  Saved Floors
+              </div>
+            ) : activeTab === 'Saved' ? (
+              <div>
+                <h3 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.5px' }}>
+                  Saved Floor Designs
                 </h3>
-
                 <div className="saved-layouts-section">
                   {savedLayouts.map(layout => (
                     <div 
                       key={layout.id} 
                       className={`saved-layout-card-blue ${currentLayoutId === layout.id ? 'active' : ''}`}
                       onClick={() => handleLoadSavedLayout(layout)}
+                      style={{ marginBottom: '8px' }}
                     >
                       <div className="layout-details">
-                        <h4>{layout.name}</h4>
-                        <span>{layout.items.length} items &bull; {new Date(layout.lastUpdated).toLocaleDateString()}</span>
+                        <h4 style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{layout.name}</h4>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                          {layout.items.length} items &bull; {new Date(layout.lastUpdated).toLocaleDateString()}
+                        </span>
                       </div>
                       <div className="layout-card-actions">
                         <button className="btn-layout-action" onClick={(e) => { e.stopPropagation(); handleLoadSavedLayout(layout); }}>
@@ -2311,13 +2319,13 @@ export default function App() {
                     </div>
                   ))}
                   {savedLayouts.length === 0 && (
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', padding: '12px', border: '1px dashed #E2E8F0', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', padding: '16px', border: '1px dashed #E2E8F0', borderRadius: '8px' }}>
                       No saved layout files found on disk.
                     </div>
                   )}
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
 
           <footer className="sidebar-footer">
@@ -3316,7 +3324,7 @@ export default function App() {
             </div>
             
             <div className="bom-drawer-content">
-              {items.filter(item => !item.roomId || item.roomId === activeRoomId).length === 0 ? (
+              {items.length === 0 ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <ShoppingCart size={40} style={{ opacity: 0.15, marginBottom: '12px' }} />
                   <p style={{ fontSize: '13px' }}>Your active room floor plan is empty!</p>
@@ -3324,64 +3332,185 @@ export default function App() {
                 </div>
               ) : (
                 <>
-                  <div className="bom-table-wrapper">
-                    <table className="bom-table">
-                      <thead>
-                        <tr>
-                          <th>Item</th>
-                          <th>Category</th>
-                          <th>Dimensions (WxD)</th>
-                          <th style={{ textAlign: 'right' }}>Est. Cost ($)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {items
-                          .filter(item => !item.roomId || item.roomId === activeRoomId)
-                          .map(item => {
-                            const cost = bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120;
-                            return (
-                              <tr key={item.id}>
-                                <td>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <span style={{ fontSize: '16px' }}>{item.emoji || '🪑'}</span>
-                                    <span style={{ fontWeight: 600 }}>{item.name}</span>
-                                  </div>
-                                </td>
-                                <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{item.type || 'Furniture'}</td>
-                                <td style={{ fontSize: '11px', fontFamily: 'monospace' }}>{item.width} x {item.height} cm</td>
-                                <td style={{ textAlign: 'right' }}>
-                                  <input 
-                                    type="number"
-                                    className="bom-cost-input"
-                                    value={cost}
-                                    onChange={(e) => {
-                                      const nextCosts = { ...bomItemCosts, [item.id]: parseFloat(e.target.value) || 0 };
-                                      setBomItemCosts(nextCosts);
-                                    }}
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                      </tbody>
-                    </table>
+                  {/* BOM Tab Bar */}
+                  <div className="bom-tabs" style={{ display: 'flex', borderBottom: '1px solid #E2E8F0', padding: '0 20px', background: '#F8FAFC', overflowX: 'auto', gap: '8px' }}>
+                    <button 
+                      className={`bom-tab-btn ${bomActiveTab === 'total' ? 'active' : ''}`}
+                      onClick={() => setBomActiveTab('total')}
+                      style={{
+                        padding: '10px 14px',
+                        border: 'none',
+                        background: 'none',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        color: bomActiveTab === 'total' ? 'var(--primary)' : 'var(--text-secondary)',
+                        borderBottom: bomActiveTab === 'total' ? '2px solid var(--primary)' : '2px solid transparent',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      📁 Total Summary
+                    </button>
+                    {rooms.map(room => (
+                      <button 
+                        key={room.id}
+                        className={`bom-tab-btn ${bomActiveTab === room.id ? 'active' : ''}`}
+                        onClick={() => setBomActiveTab(room.id)}
+                        style={{
+                          padding: '10px 14px',
+                          border: 'none',
+                          background: 'none',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          color: bomActiveTab === room.id ? 'var(--primary)' : 'var(--text-secondary)',
+                          borderBottom: bomActiveTab === room.id ? '2px solid var(--primary)' : '2px solid transparent',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        🚪 {room.name}
+                      </button>
+                    ))}
                   </div>
 
-                  <div className="bom-footer-summary">
-                    <div className="bom-summary-row">
-                      <span>Total Elements Quantity:</span>
-                      <span style={{ fontWeight: 700 }}>{items.filter(item => !item.roomId || item.roomId === activeRoomId).length} items</span>
+                  {bomActiveTab === 'total' ? (
+                    /* group summary view */
+                    <div className="bom-total-summary-view" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1 }}>
+                      <div style={{ background: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)', padding: '16px', borderRadius: '12px', border: '1px solid #BFDBFE' }}>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '11px', color: '#1E40AF', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Project Budget</h4>
+                        <span style={{ fontSize: '26px', fontWeight: 800, color: '#1E3A8A' }}>
+                          ${items.reduce((sum, item) => sum + (bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                        <p style={{ margin: '6px 0 0 0', fontSize: '11px', color: '#1E40AF' }}>
+                          Across {rooms.length} rooms and {items.length} total elements.
+                        </p>
+                      </div>
+
+                      <h4 style={{ margin: '10px 0 0 0', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)' }}>Cost Segregation by Room Division</h4>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {rooms.map(room => {
+                          const roomItems = items.filter(item => item.roomId === room.id || (!item.roomId && room.id === 'room_1'));
+                          const roomCost = roomItems.reduce((sum, item) => sum + (bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120), 0);
+                          return (
+                            <div 
+                              key={room.id}
+                              onClick={() => setBomActiveTab(room.id)}
+                              style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center', 
+                                padding: '12px 16px', 
+                                background: '#FFFFFF', 
+                                border: '1px solid #E2E8F0', 
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease'
+                              }}
+                              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(37, 99, 235, 0.08)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }}
+                            >
+                              <div>
+                                <h5 style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{room.name}</h5>
+                                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{roomItems.length} elements placed</span>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                  ${roomCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </span>
+                                <div style={{ fontSize: '9px', color: 'var(--primary)', fontWeight: 600, marginTop: '2px' }}>View details →</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="bom-summary-row highlight">
-                      <span>Estimated Grand Budget:</span>
-                      <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
-                        ${items
-                          .filter(item => !item.roomId || item.roomId === activeRoomId)
-                          .reduce((sum, item) => sum + (bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120), 0)
-                          .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  </div>
+                  ) : (
+                    /* itemized list view for selected room tab */
+                    <>
+                      <div className="bom-table-wrapper" style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ padding: '12px 20px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+                            Itemized List: {rooms.find(r => r.id === bomActiveTab)?.name || 'Elements'}
+                          </span>
+                          <button 
+                            onClick={() => setBomActiveTab('total')}
+                            style={{ border: 'none', background: 'none', color: 'var(--primary)', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                          >
+                            ← Back to Total
+                          </button>
+                        </div>
+                        
+                        <table className="bom-table">
+                          <thead>
+                            <tr>
+                              <th>Item</th>
+                              <th>Category</th>
+                              <th>Dimensions (WxD)</th>
+                              <th style={{ textAlign: 'right' }}>Est. Cost ($)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {items
+                              .filter(item => item.roomId === bomActiveTab || (!item.roomId && bomActiveTab === 'room_1'))
+                              .map(item => {
+                                const cost = bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120;
+                                return (
+                                  <tr key={item.id}>
+                                    <td>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span style={{ fontSize: '16px' }}>{item.emoji || '🪑'}</span>
+                                        <span style={{ fontWeight: 600 }}>{item.name}</span>
+                                      </div>
+                                    </td>
+                                    <td style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{item.type || 'Furniture'}</td>
+                                    <td style={{ fontSize: '11px', fontFamily: 'monospace' }}>{item.width} x {item.height} cm</td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      <input 
+                                        type="number"
+                                        className="bom-cost-input"
+                                        value={cost}
+                                        onChange={(e) => {
+                                          const nextCosts = { ...bomItemCosts, [item.id]: parseFloat(e.target.value) || 0 };
+                                          setBomItemCosts(nextCosts);
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            {items.filter(item => item.roomId === bomActiveTab || (!item.roomId && bomActiveTab === 'room_1')).length === 0 && (
+                              <tr>
+                                <td colSpan="4" style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)', fontSize: '12px' }}>
+                                  No items placed in this room division yet.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div className="bom-footer-summary">
+                        <div className="bom-summary-row">
+                          <span>Room elements count:</span>
+                          <span style={{ fontWeight: 700 }}>
+                            {items.filter(item => item.roomId === bomActiveTab || (!item.roomId && bomActiveTab === 'room_1')).length} items
+                          </span>
+                        </div>
+                        <div className="bom-summary-row highlight">
+                          <span>Room Budget Subtotal:</span>
+                          <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                            ${items
+                              .filter(item => item.roomId === bomActiveTab || (!item.roomId && bomActiveTab === 'room_1'))
+                              .reduce((sum, item) => sum + (bomItemCosts[item.id] !== undefined ? bomItemCosts[item.id] : 120), 0)
+                              .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
