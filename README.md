@@ -39,12 +39,12 @@ We have completely overhauled the application to include the following specifica
    - **Right:** High-end quick-action shortcuts (Camera, Share, Settings, Layout-Grid) followed by a **pulsing dirty indicator** on the Save Layout button and user avatar initials.
 2. **Promotional Banner (Height: 36px):**
    - Blue promotional banner offering upgrades to premium elements, dismissible via a close button.
-3. **Multi-Room Tab Bar (Height: 40px):**
-   - Toggle or spawn new floor divisions dynamically using the "+" add button. Tracks item count per division live.
+3. **Draggable Floating Active Room Switcher:**
+   - A modern floating pill-tab switcher tracking configured rooms and placed furniture items live. To optimize workspace visibility, this bar can be **clicked and dragged freely anywhere on the screen**.
 4. **Left Sidebar Catalog (Width: 300px):**
-   - Double tab header separating "Rooms" (preloaded room sizing templates) and "Categories" (furniture blocks).
-   - High-fidelity Unsplash cover photography cards with smooth staggered mounting animations (40ms staggering per card).
-   - "Saved Layouts" persistence list inside the drawer for continued visual session reloading.
+   - Double tab header separating "Rooms" (preloaded room templates with incremental naming logic) and "Categories" (rich custom furniture catalogs).
+   - High-fidelity Cover Unsplash cover photography with staggered mounting animations (40ms staggering per card).
+   - "Saved Floors" persistence list inside the drawer for continued visual session reloading.
 5. **Canvas Dot Grid Background:**
    - Background matching coordinates utilizing a custom dot grid: dots at every 20px, dot size 1px, in cool gray.
 6. **Room Box with Wood Floor:**
@@ -57,8 +57,8 @@ We have completely overhauled the application to include the following specifica
    - Centered horizontal action menu floating above the selected item for View, Flip, Favorite, Rotate, and Delete. Below the item, a "⊕ Duplicate" action pill is anchored.
 10. **Slide-Up Properties Bar (Height: 48px):**
     - Selecting any item slides up a panel from the bottom containing inputs for Width, Depth, Height, Angle, and Elevation in cm with 2 decimal places. Values bind live on Enter or Blur events.
-11. **Real-time Minimap:**
-    - Bottom-left miniature preview card showing miniature scaled replica rects for placed furniture, toggleable via a custom pin button.
+11. **Draggable Real-time Minimap:**
+    - Bottom-left miniature preview card showing proportional scaled replica rects for placed furniture, toggleable via a custom pin button. The entire minimap card can be **dragged freely to any corner of the viewport** for custom workspace personalization.
 
 ---
 
@@ -102,6 +102,73 @@ As part of the **Bonus Challenges**, we identified, documented, and solved cruci
 * **Problem:** Enabling the user to place the floating Room Switcher or Minimap panel anywhere on screen could lead to users dragging panels completely off-screen, rendering them inaccessible.
 * **Handled Solution:** Registered mouse-event listener tracking with boundary checking, clamping coordinates within the exact viewport height and width limits.
 
+### 9. Empty Floor Plan Visual Guidance
+* **Problem:** Starting with a blank floor layout canvas without any initial room boundaries or switchers can be disorienting and cause first-time users to not know how to proceed.
+* **Handled Solution:** Designed a high-fidelity glassmorphic empty-state dashboard indicating "Your Floor Plan is Empty" with a blue button redirecting them directly to the sidebar room tab, giving them an instant call-to-action.
+
+### 10. Multi-Floor State Loss during Transitions
+* **Problem:** Switching active levels (e.g. from Ground Floor to First Floor) in a multi-story layout without manually saving would cause any in-memory layout edits on the active level to be lost.
+* **Handled Solution:** Implemented an automatic memory-synced state packer that commits all current modifications of the current floor (items, room sections, grid size, etc.) to the central `floors` state array before hot-swapping the active layout sheet.
+
+### 11. Multi-Floor Persistence Syncing & Reload Mechanism
+* **Problem:** Standard database savers only store a flat list of items and rooms, discarding any upper floor configurations when the file is written to local storage, which makes reloading incomplete.
+* **Handled Solution:** Upgraded the save model and POST body layout handler to write the entire `floors` array and `activeFloorId` to the database file. Loading a floor plan safely recovers all floor canvas items, allowing uninterrupted editing.
+
+### 12. Legacy Layout Document Compatibility
+* **Problem:** Older saved floor plan JSON files do not have `floors` or `rooms` variables. Importing these legacy files could cause React renderer crashes or empty pages.
+* **Handled Solution:** Engineered a robust layout converter that dynamically parses older formats on import, constructs default Ground, First, and Second floors, and wraps legacy items on the "Ground Floor" seamlessly.
+
+---
+
+## 📂 Project Directory Structure
+
+```
+├── backend/
+│   ├── data/
+│   │   └── layouts/         # JSON files containing persistent floor layouts
+│   ├── server.js            # Express API server for persistence, sorting & deletion
+│   ├── package.json         # Node dependencies
+│   └── package-lock.json
+├── frontend/
+│   ├── src/
+│   │   ├── assets/          # Static elements & cover illustrations
+│   │   ├── App.jsx          # React Canvas, HUD layout panel, state & logic controller
+│   │   ├── main.jsx         # App mounting point
+│   │   └── App.css          # Vanilla CSS responsive design system
+│   ├── index.html
+│   ├── vite.config.js       # Vite configuration with remote binding and API proxying
+│   ├── package.json         # Client dependencies (React, Lucide, HTML-to-Image)
+│   └── package-lock.json
+├── package.json             # Root package orchestrating concurrently dependencies
+└── README.md                # Comprehensive system documentation
+```
+
+## 🎹 Keyboard Shortcuts Legend
+
+| Action | Hotkey | Target / Detail |
+| :--- | :--- | :--- |
+| **Delete Block** | `Delete` or `Backspace` | Removes the active furniture block from the canvas |
+| **Nudge Block** | `Arrow Keys` (Left/Right/Up/Down) | Moves the active block by a fine increments (`1px`) |
+| **Snap Nudge** | `Shift` + `Arrow Keys` | Moves the active block by a grid cell increments (`20px`) |
+| **Rotate 90°** | `R` or `r` | Rotates the selected block by 90 degrees |
+| **Deselect Block** | `Escape` | Clears block active state and hides transformation boundaries |
+| **Undo Action** | `Ctrl` + `Z` | Reverts the last layout modification in active session history |
+| **Redo Action** | `Ctrl` + `Y` | Restores the previously undone layout state |
+
+> [!NOTE]
+> Keyboard hotkeys are dynamically locked when focusing on property inputs, layout name renaming, or catalog search fields to prevent accidental canvas changes.
+
+## 📋 API Endpoints Documentation
+
+The Node.js Express server exposes the following fast, CORS-enabled endpoints:
+
+| Method | Endpoint | Description | Payload Schema | Response Schema |
+| :--- | :--- | :--- | :--- | :--- |
+| **GET** | `/api/health` | Service health status check | *None* | `{ "status": "healthy", "timestamp": "ISO-string" }` |
+| **GET** | `/api/layouts` | Retrieves all saved floor plans, sorted by `lastUpdated` desc | *None* | `[ { "id", "name", "items", "rooms", "floors", ... } ]` |
+| **POST** | `/api/layouts` | Saves or updates a floor layout blueprint | `{ "id"?, "name", "items", "rooms", "floors", "activeFloorId", ... }` | `{ "message": "Success", "layout": { ... } }` |
+| **DELETE** | `/api/layouts/:id` | Permanently deletes a layout JSON file from disk | *None* | `{ "message": "Deleted successfully", "id" }` |
+
 ---
 
 ## 🛠️ Tech Stack & Architecture
@@ -117,4 +184,28 @@ As part of the **Bonus Challenges**, we identified, documented, and solved cruci
 - **Database:** Local File Persistence (`/backend/data/layouts/*.json`). Serializes and writes each layout configuration with precise spatial dimensions and timestamps to individual files.
 
 ---
-*Developed as a high-fidelity Prototype for the Interior Design Internship Evaluation.*
+
+## 🌐 Remote Execution & Network Exposure
+
+Planora is fully configured to be run and accessed **remotely** over your local network (LAN) or public URLs (via port forwarding/tunnels). 
+
+### 1. Run over Local Area Network (LAN)
+Vite and the Express API are bound to host `0.0.0.0`, allowing other devices (e.g. tablets, phones, other laptops) on the same network to access the interface.
+- Start the servers by running `npm start` on the host machine.
+- Note the host machine's IP address (e.g., `192.168.1.45`).
+- Open any web browser on your remote device and navigate to:
+  ```
+  http://<HOST_IP>:3000
+  ```
+- All layout saves, room edits, and multi-floor configurations will seamlessly sync to the host's backend server storage.
+
+### 2. Public Access Tunnels (ngrok / Cloudflare Tunnels)
+To share your live planner editor with clients or evaluators outside your network:
+- Install ngrok and tunnel your Vite dev server port:
+  ```bash
+  ngrok http 3000
+  ```
+- Share the generated secure `https://...ngrok-free.app` URL with anyone. The proxy automatically handles backend endpoints cleanly.
+
+---
+*Developed and polished as a high-fidelity Prototype for the Interior Design Internship Evaluation, engineered with the assistance of **Google Antigravity**, a state-of-the-art agentic AI pair-programming companion developed by the Google DeepMind team.*

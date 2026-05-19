@@ -62,44 +62,187 @@ const ALL_CATALOG_FOLDERS = [
 ];
 
 const FURNITURE_ITEMS = [
+  // 1. Armchairs
   { type: 'armchair', name: 'Lounge Armchair', emoji: '🪑', width: 90, height: 90, img: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'armchairs' },
+  { type: 'armchair', name: 'Velvet Recliner', emoji: '🪑', width: 95, height: 95, img: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=260&q=80', rooms: ['living', 'bedroom'], category: 'armchairs' },
+  { type: 'chair', name: 'Egg Accent Chair', emoji: '🪑', width: 85, height: 85, img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=260&q=80', rooms: ['living', 'office'], category: 'armchairs' },
+  { type: 'armchair', name: 'Wingback Chair', emoji: '🪑', width: 100, height: 90, img: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=260&q=80', rooms: ['living', 'bedroom'], category: 'armchairs' },
+  { type: 'chair', name: 'Nordic Club Chair', emoji: '🪑', width: 80, height: 80, img: 'https://images.unsplash.com/photo-1506898667547-42e22a46e125?w=260&q=80', rooms: ['living', 'office'], category: 'armchairs' },
+
+  // 2. Sofas
   { type: 'sofa', name: 'Luxury Sofa', emoji: '🛋', width: 180, height: 90, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80', rooms: ['living'], category: 'sofas' },
   { type: 'l_sofa', name: 'Sectional L-Sofa', emoji: '🛋', width: 220, height: 180, img: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=260&q=80', rooms: ['living'], category: 'sofas' },
+  { type: 'sofa', name: 'Chesterfield Sofa', emoji: '🛋', width: 210, height: 95, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80', rooms: ['living'], category: 'sofas' },
+  { type: 'sofa', name: 'Mid-Century Daybed', emoji: '🛋', width: 190, height: 85, img: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=260&q=80', rooms: ['living', 'office'], category: 'sofas' },
+  { type: 'sofa', name: 'Futon Sleeper Sofa', emoji: '🛋', width: 170, height: 90, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80', rooms: ['living', 'bedroom'], category: 'sofas' },
+
+  // 3. Ottomans
   { type: 'ottoman', name: 'Velvet Ottoman', emoji: '🦶', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'bedroom'], category: 'ottoman' },
+  { type: 'ottoman', name: 'Leather Pouf', emoji: '🟤', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'bedroom'], category: 'ottoman' },
+  { type: 'ottoman', name: 'Storage Bench', emoji: '🗄', width: 120, height: 50, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'bedroom', 'hallway'], category: 'ottoman' },
+  { type: 'ottoman', name: 'Tufted Footstool', emoji: '🦶', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['bedroom'], category: 'ottoman' },
+  { type: 'ottoman', name: 'Round Knit Pouf', emoji: '🧶', width: 55, height: 55, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'kids'], category: 'ottoman' },
+
+  // 4. Beds
   { type: 'bed', name: 'King-Size Bed', emoji: '🛏', width: 200, height: 180, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['bedroom'], category: 'beds' },
   { type: 'single_bed', name: 'Single Bed', emoji: '🛏', width: 190, height: 100, img: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=260&q=80', rooms: ['bedroom'], category: 'beds' },
+  { type: 'bed', name: 'Queen Canopy Bed', emoji: '🛏', width: 200, height: 160, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['bedroom'], category: 'beds' },
+  { type: 'bed', name: 'Japanese Futon', emoji: '🛏', width: 180, height: 180, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['bedroom'], category: 'beds' },
+  { type: 'bed', name: 'Storage Bed Frame', emoji: '🛏', width: 200, height: 165, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['bedroom'], category: 'beds' },
+
+  // 5. Storage
   { type: 'wardrobe', name: 'Sliding Wardrobe', emoji: '🚪', width: 160, height: 60, img: 'https://images.unsplash.com/photo-1558882224-cca166733360?w=260&q=80', rooms: ['bedroom', 'hallway'], category: 'storage' },
   { type: 'dresser', name: 'Vanity Dresser', emoji: '🪞', width: 100, height: 50, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['bedroom', 'living', 'hallway'], category: 'storage' },
   { type: 'nightstand', name: 'Oak Nightstand', emoji: '🗄', width: 60, height: 50, img: 'https://images.unsplash.com/photo-1532372320978-9b4d7a92b24d?w=260&q=80', rooms: ['bedroom', 'bathroom', 'hallway'], category: 'storage' },
+  { type: 'shelf', name: 'Bookcase Shelf', emoji: '📚', width: 120, height: 35, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'storage' },
+  { type: 'cabinet', name: 'Credenza Sideboard', emoji: '🗄', width: 150, height: 45, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'dining', 'office'], category: 'storage' },
+
+  // 6. Tables & Chairs
   { type: 'dining_table', name: 'Dining Oak Table', emoji: '🍽', width: 180, height: 100, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['living', 'kitchen', 'dining'], category: 'tables_chairs' },
   { type: 'chair', name: 'Designer Chair', emoji: '🪑', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=260&q=80', rooms: ['living', 'kitchen', 'dining', 'public'], category: 'tables_chairs' },
   { type: 'stool', name: 'Bar Stool', emoji: '🪑', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=260&q=80', rooms: ['kitchen'], category: 'tables_chairs' },
+  { type: 'coffee_table', name: 'Round Coffee Table', emoji: '☕', width: 90, height: 90, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['living'], category: 'tables_chairs' },
+  { type: 'dining_table', name: 'Banquet Table', emoji: '🍽', width: 220, height: 110, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['dining', 'public'], category: 'tables_chairs' },
+
+  // 7. Office
   { type: 'writing_desk', name: 'Office Desk', emoji: '💻', width: 140, height: 75, img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=260&q=80', rooms: ['bedroom', 'office'], category: 'office' },
   { type: 'office_chair', name: 'Ergonomic Chair', emoji: '🪑', width: 65, height: 65, img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=260&q=80', rooms: ['bedroom', 'office'], category: 'office' },
+  { type: 'storage', name: 'Filing Cabinet', emoji: '🗄', width: 60, height: 50, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['office'], category: 'office' },
+  { type: 'dining_table', name: 'Conference Table', emoji: '👥', width: 260, height: 120, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['office', 'public'], category: 'office' },
+  { type: 'writing_desk', name: 'Drafting Desk', emoji: '📐', width: 150, height: 85, img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=260&q=80', rooms: ['office'], category: 'office' },
+
+  // 8. Kids
   { type: 'kids_bed', name: 'Kids Bed', emoji: '🛏', width: 150, height: 90, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['kids'], category: 'kids' },
   { type: 'play_desk', name: 'Kids Play Desk', emoji: '💻', width: 100, height: 55, img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=260&q=80', rooms: ['kids'], category: 'kids' },
   { type: 'toy_cabinet', name: 'Toy Cabinet', emoji: '🗄', width: 90, height: 45, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['kids'], category: 'kids' },
   { type: 'little_chair', name: 'Little Chair', emoji: '🪑', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=260&q=80', rooms: ['kids'], category: 'kids' },
+  { type: 'kids_bed', name: 'Kids Bunk Bed', emoji: '🛏', width: 160, height: 95, img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=260&q=80', rooms: ['kids'], category: 'kids' },
+
+  // 9. Kitchen
   { type: 'island', name: 'Kitchen Island', emoji: '🍳', width: 200, height: 100, img: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=260&q=80', rooms: ['kitchen'], category: 'kitchen' },
   { type: 'counter', name: 'Kitchen Counter', emoji: '🍳', width: 160, height: 60, img: 'https://images.unsplash.com/photo-1556912403-c596e57667e6?w=260&q=80', rooms: ['kitchen'], category: 'kitchen' },
+  { type: 'sink', name: 'Sink Unit', emoji: '🚰', width: 100, height: 60, img: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=260&q=80', rooms: ['kitchen'], category: 'kitchen' },
+  { type: 'wardrobe', name: 'Pantry Cabinet', emoji: '🥫', width: 90, height: 60, img: 'https://images.unsplash.com/photo-1558882224-cca166733360?w=260&q=80', rooms: ['kitchen'], category: 'kitchen' },
+  { type: 'counter', name: 'Prep Counter', emoji: '🔪', width: 120, height: 60, img: 'https://images.unsplash.com/photo-1556912403-c596e57667e6?w=260&q=80', rooms: ['kitchen'], category: 'kitchen' },
+
+  // 10. Bathroom
   { type: 'tub', name: 'Freestanding Tub', emoji: '🛁', width: 170, height: 80, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['bathroom'], category: 'bathroom' },
   { type: 'shower', name: 'Shower Cabin', emoji: '🚿', width: 100, height: 100, img: 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=260&q=80', rooms: ['bathroom'], category: 'bathroom' },
   { type: 'sink', name: 'Double Sink', emoji: '🚰', width: 120, height: 50, img: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=260&q=80', rooms: ['bathroom'], category: 'bathroom' },
+  { type: 'stool', name: 'Toilet Suite', emoji: '🚽', width: 50, height: 70, img: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=260&q=80', rooms: ['bathroom'], category: 'bathroom' },
+  { type: 'wardrobe', name: 'Linen Closet', emoji: '🧺', width: 80, height: 45, img: 'https://images.unsplash.com/photo-1558882224-cca166733360?w=260&q=80', rooms: ['bathroom'], category: 'bathroom' },
+
+  // 11. Public Spaces
   { type: 'public_bench', name: 'Public Bench', emoji: '🪑', width: 150, height: 50, img: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=260&q=80', rooms: ['living', 'public'], category: 'public' },
+  { type: 'counter', name: 'Reception Desk', emoji: '🛎', width: 180, height: 70, img: 'https://images.unsplash.com/photo-1556912403-c596e57667e6?w=260&q=80', rooms: ['public'], category: 'public' },
+  { type: 'sofa', name: 'Lecture Seats', emoji: '🎓', width: 240, height: 60, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80', rooms: ['public'], category: 'public' },
+  { type: 'coffee_table', name: 'Cafe Table', emoji: '☕', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['public'], category: 'public' },
+  { type: 'sofa', name: 'Lounge Group', emoji: '🛋', width: 200, height: 200, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80', rooms: ['public'], category: 'public' },
+
+  // 12. Lighting
   { type: 'floor_lamp', name: 'Floor Lamp', emoji: '💡', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'kids', 'dining', 'hallway', 'office', 'public'], category: 'lighting' },
   { type: 'reading_lamp', name: 'Reading Lamp', emoji: '💡', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['bedroom'], category: 'lighting' },
+  { type: 'lamp', name: 'Chandelier', emoji: '🔱', width: 80, height: 80, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'dining'], category: 'lighting' },
+  { type: 'lamp', name: 'Track Lights', emoji: '💡', width: 120, height: 20, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'kitchen', 'office'], category: 'lighting' },
+  { type: 'lamp', name: 'Wall Sconce', emoji: '💡', width: 30, height: 35, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['bedroom', 'hallway'], category: 'lighting' },
+
+  // 13. Household Appliances
   { type: 'washing_machine', name: 'Washing Machine', emoji: '🧺', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['bathroom', 'kitchen'], category: 'appliances' },
-  { type: 'fridge', name: 'Refrigerator', emoji: '🧊', width: 80, height: 80, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
-  { type: 'tv_console', name: 'TV Cabinet', emoji: '📺', width: 180, height: 50, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'bedroom'], category: 'audio_video' },
-  { type: 'ac_unit', name: 'AC Unit', emoji: '❄️', width: 100, height: 30, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'climate' },
-  { type: 'mirror', name: 'Mirror', emoji: '🪞', width: 80, height: 10, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['bathroom', 'bedroom', 'hallway', 'decor'], category: 'decor' },
-  { type: 'floor_plant', name: 'Monstera Plant', emoji: '🪴', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'dining', 'hallway', 'office', 'public', 'decor'], category: 'plants' },
-  { type: 'person_standing', name: 'Person Silhouette', emoji: '🚶', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'public'], category: 'people' },
-  { type: 'pet_dog', name: 'Dog Silhouette', emoji: '🐕', width: 60, height: 40, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'public'], category: 'pets' },
-  { type: 'yoga_mat', name: 'Yoga Mat', emoji: '🧘', width: 180, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom'], category: 'sport' },
-  { type: 'window_curtain', name: 'Window Curtain', emoji: '🪟', width: 120, height: 12, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'bedroom', 'hallway', 'decor'], category: 'curtains' },
-  { type: 'circular_rug', name: 'Circular Rug', emoji: '⭕', width: 160, height: 160, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'kids', 'dining', 'hallway', 'office', 'decor'], category: 'rugs' },
-  { type: 'coffee_maker', name: 'Coffee Station', emoji: '☕', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['kitchen'], category: 'kitchenware' }
+  { type: 'washing_machine', name: 'Tumble Dryer', emoji: '🧺', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['bathroom'], category: 'appliances' },
+  { type: 'ottoman', name: 'Robovac Dock', emoji: '🧹', width: 45, height: 45, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['living', 'hallway'], category: 'appliances' },
+  { type: 'kitchenware', name: 'Stand Mixer', emoji: '🥣', width: 40, height: 40, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'appliances' },
+  { type: 'counter', name: 'Ironing Setup', emoji: '👔', width: 110, height: 40, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['bedroom', 'hallway'], category: 'appliances' },
+
+  // 14. Kitchen Appliances
+  { type: 'fridge', name: 'Refrigerator', emoji: '🧊', width: 85, height: 80, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
+  { type: 'fridge', name: 'Oven & Hob', emoji: '🔥', width: 75, height: 75, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
+  { type: 'fridge', name: 'Dishwasher Unit', emoji: '🧼', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
+  { type: 'kitchenware', name: 'Microwave oven', emoji: '⚡', width: 60, height: 45, img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
+  { type: 'coffee_maker', name: 'Espresso Center', emoji: '☕', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['kitchen'], category: 'kitchen_appliances' },
+
+  // 15. Audio & Video
+  { type: 'tv_console', name: 'TV Cabinet Console', emoji: '📺', width: 180, height: 50, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'bedroom'], category: 'audio_video' },
+  { type: 'cabinet', name: 'Hi-Fi Audio Tower', emoji: '🔊', width: 70, height: 60, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'office'], category: 'audio_video' },
+  { type: 'mirror', name: 'Projector Screen', emoji: '📽', width: 200, height: 10, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'office', 'public'], category: 'audio_video' },
+  { type: 'writing_desk', name: 'Gaming Rig Setup', emoji: '🎮', width: 140, height: 80, img: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=260&q=80', rooms: ['bedroom', 'office'], category: 'audio_video' },
+  { type: 'nightstand', name: 'Retro Turntable', emoji: '📻', width: 65, height: 50, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'bedroom'], category: 'audio_video' },
+
+  // 16. Climate Controls
+  { type: 'ac_unit', name: 'AC Split Unit', emoji: '❄️', width: 100, height: 30, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'climate' },
+  { type: 'lamp', name: 'Air Purifier Tower', emoji: '🍃', width: 40, height: 40, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'climate' },
+  { type: 'ac_unit', name: 'Radiator Heater', emoji: '🔥', width: 80, height: 20, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom', 'hallway'], category: 'climate' },
+  { type: 'lamp', name: 'Vapor Humidifier', emoji: '💧', width: 35, height: 35, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['bedroom', 'kids'], category: 'climate' },
+  { type: 'lamp', name: 'Standing Air Fan', emoji: '🌀', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'office'], category: 'climate' },
+
+  // 17. Decor
+  { type: 'mirror', name: 'Full Mirror Wall', emoji: '🪞', width: 110, height: 10, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['bathroom', 'bedroom', 'hallway', 'decor'], category: 'decor' },
+  { type: 'mirror', name: 'Abstract Art Piece', emoji: '🖼', width: 100, height: 8, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'dining', 'decor'], category: 'decor' },
+  { type: 'ottoman', name: 'Sculptural Vase', emoji: '🏺', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'hallway', 'decor'], category: 'decor' },
+  { type: 'mirror', name: 'Framed Canvas Grid', emoji: '🖼', width: 150, height: 8, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'decor'], category: 'decor' },
+  { type: 'nightstand', name: 'Designer Desk Clock', emoji: '⏰', width: 40, height: 40, img: 'https://images.unsplash.com/photo-1532372320978-9b4d7a92b24d?w=260&q=80', rooms: ['office', 'bedroom', 'decor'], category: 'decor' },
+
+  // 18. Curtains & Blinds
+  { type: 'window_curtain', name: 'Elegant Window Drapes', emoji: '🪟', width: 120, height: 12, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'bedroom', 'decor'], category: 'curtains' },
+  { type: 'window_curtain', name: 'Roller Privacy Blinds', emoji: '🪟', width: 100, height: 8, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['kitchen', 'bathroom', 'office'], category: 'curtains' },
+  { type: 'window_curtain', name: 'Patio Slatted Blinds', emoji: '🪟', width: 180, height: 15, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'public'], category: 'curtains' },
+  { type: 'window_curtain', name: 'Venetian Wood Shades', emoji: '🪟', width: 110, height: 10, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['bedroom', 'office'], category: 'curtains' },
+  { type: 'window_curtain', name: 'Roman Fabric Shades', emoji: '🪟', width: 90, height: 10, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['bedroom', 'kids'], category: 'curtains' },
+
+  // 19. Rugs
+  { type: 'circular_rug', name: 'Circular Velvet Rug', emoji: '⭕', width: 160, height: 160, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'kids', 'decor'], category: 'rugs' },
+  { type: 'circular_rug', name: 'Persian Area Rug', emoji: '🎴', width: 220, height: 160, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'dining', 'decor'], category: 'rugs' },
+  { type: 'circular_rug', name: 'Cozy Sheepskin Rug', emoji: '🐑', width: 110, height: 80, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['bedroom', 'kids', 'decor'], category: 'rugs' },
+  { type: 'circular_rug', name: 'Geometric Corridor Runner', emoji: '🏁', width: 240, height: 80, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['hallway', 'decor'], category: 'rugs' },
+  { type: 'circular_rug', name: 'Jute Natural Fiber Rug', emoji: '🟤', width: 140, height: 140, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'decor'], category: 'rugs' },
+
+  // 20. Kitchenware
+  { type: 'coffee_maker', name: 'Drip Coffee Station', emoji: '☕', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['kitchen'], category: 'kitchenware' },
+  { type: 'shelf', name: 'Hanging Pot Rack', emoji: '🍳', width: 120, height: 30, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['kitchen'], category: 'kitchenware' },
+  { type: 'kitchenware', name: 'Chef Knife Block', emoji: '🔪', width: 35, height: 35, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['kitchen'], category: 'kitchenware' },
+  { type: 'kitchenware', name: 'Stacked Dinnerware', emoji: '🍽', width: 45, height: 45, img: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=260&q=80', rooms: ['kitchen', 'dining'], category: 'kitchenware' },
+  { type: 'nightstand', name: 'Rotating Spice Stand', emoji: '🧂', width: 40, height: 40, img: 'https://images.unsplash.com/photo-1532372320978-9b4d7a92b24d?w=260&q=80', rooms: ['kitchen'], category: 'kitchenware' },
+
+  // 21. Fireplaces
+  { type: 'fireplaces', name: 'Bio-Ethanol Burner', emoji: '🔥', width: 90, height: 45, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'public'], category: 'fireplaces' },
+  { type: 'fireplaces', name: 'Stone Mantel Hearth', emoji: '🪵', width: 160, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living'], category: 'fireplaces' },
+  { type: 'fireplaces', name: 'Wood-Burning Stove', emoji: '🪵', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom'], category: 'fireplaces' },
+  { type: 'fireplaces', name: 'Wall LED Fireplace', emoji: '🖼', width: 130, height: 25, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'fireplaces' },
+  { type: 'ottoman', name: 'Outdoor Fire Pit Bowl', emoji: '🔥', width: 85, height: 85, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'public'], category: 'fireplaces' },
+
+  // 22. Plants
+  { type: 'floor_plant', name: 'Monstera Floor Plant', emoji: '🪴', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'dining', 'hallway', 'office', 'public', 'decor'], category: 'plants' },
+  { type: 'floor_plant', name: 'Fiddle Leaf Fig Tree', emoji: '🌳', width: 70, height: 70, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'dining', 'hallway', 'office', 'decor'], category: 'plants' },
+  { type: 'floor_plant', name: 'Mini Succulent Trio', emoji: '🌵', width: 45, height: 30, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['bedroom', 'office', 'decor'], category: 'plants' },
+  { type: 'floor_plant', name: 'Hanging Ivy Vine', emoji: '🌿', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'decor'], category: 'plants' },
+  { type: 'floor_plant', name: 'Snake Plant Corner Stand', emoji: '🪴', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'office', 'decor'], category: 'plants' },
+
+  // 23. People Silhouettes
+  { type: 'person_standing', name: 'Standing Silhouette', emoji: '🚶', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'public'], category: 'people' },
+  { type: 'person_standing', name: 'Sitting Silhouette', emoji: '🧘', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'bedroom', 'office', 'public'], category: 'people' },
+  { type: 'person_standing', name: 'Two People Group', emoji: '👥', width: 90, height: 50, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'office', 'public'], category: 'people' },
+  { type: 'person_standing', name: 'Child Silhouette', emoji: '🚶', width: 40, height: 40, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'kids', 'public'], category: 'people' },
+  { type: 'person_standing', name: 'Presenter Silhouette', emoji: '🧑‍🏫', width: 50, height: 50, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['office', 'public'], category: 'people' },
+
+  // 24. Sports & Fitness
+  { type: 'yoga_mat', name: 'Premium Yoga Mat', emoji: '🧘', width: 180, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom'], category: 'sport' },
+  { type: 'sport', name: 'Treadmill Machine', emoji: '🏃', width: 160, height: 75, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'sport' },
+  { type: 'sport', name: 'Adjustable Weight Bench', emoji: '🏋️', width: 130, height: 50, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'sport' },
+  { type: 'sport', name: 'Stationary Spin Bike', emoji: '🚴', width: 110, height: 55, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'bedroom', 'office'], category: 'sport' },
+  { type: 'floor_lamp', name: 'Heavy Punching Bag', emoji: '🥊', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom'], category: 'sport' },
+
+  // 25. Holidays & Seasonal
+  { type: 'floor_plant', name: 'Christmas Pine Tree', emoji: '🎄', width: 100, height: 100, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'kids'], category: 'holidays' },
+  { type: 'floor_plant', name: 'Halloween Pumpkin Stack', emoji: '🎃', width: 60, height: 60, img: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=260&q=80', rooms: ['living', 'hallway'], category: 'holidays' },
+  { type: 'curtains', name: 'Party Balloon Archway', emoji: '🎈', width: 220, height: 30, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'kids', 'public'], category: 'holidays' },
+  { type: 'decor', name: 'Holiday Wreath Accent', emoji: '🎀', width: 50, height: 10, img: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=260&q=80', rooms: ['living', 'hallway'], category: 'holidays' },
+  { type: 'lamp', name: 'Decorative Menorah', emoji: '🕎', width: 60, height: 30, img: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=260&q=80', rooms: ['living', 'bedroom'], category: 'holidays' },
+
+  // 26. Pets & Animals
+  { type: 'pet_dog', name: 'Golden Retriever Dog', emoji: '🐕', width: 70, height: 40, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'public'], category: 'pets' },
+  { type: 'pet_dog', name: 'Fluffy Persian Cat', emoji: '🐈', width: 50, height: 30, img: 'https://images.unsplash.com/photo-1566241477600-ac026ad43874?w=260&q=80', rooms: ['living', 'bedroom'], category: 'pets' },
+  { type: 'shelf', name: 'Cat Climbing Tower', emoji: '🐾', width: 75, height: 75, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'bedroom', 'kids'], category: 'pets' },
+  { type: 'ottoman', name: 'Orthopedic Dog Cushion', emoji: '🐶', width: 80, height: 60, img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=260&q=80', rooms: ['living', 'bedroom'], category: 'pets' },
+  { type: 'cabinet', name: 'Aquarium Fish Tank', emoji: '🐠', width: 110, height: 50, img: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=260&q=80', rooms: ['living', 'office', 'kids'], category: 'pets' }
 ];
 
 const renderFurnitureSvg = (type, color) => {
@@ -313,7 +456,7 @@ const ROOM_FOLDERS = [
   { id: 'dining', name: 'Dining room', img: 'https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?w=260&q=80' },
   { id: 'hallway', name: 'Hallway', img: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=260&q=80' },
   { id: 'office', name: 'Office', img: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=260&q=80' },
-  { id: 'public', name: 'Public space', img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=260&q=80' },
+  { id: 'public', name: 'Public space', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN2AM9QQ6gkxlWwf5TR5fbzU7LFbJitKExKQ&s' },
   { id: 'decor', name: 'Decor', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=260&q=80' }
 ];
 
@@ -331,6 +474,7 @@ export default function App() {
   const [loadingStatusIndex, setLoadingStatusIndex] = useState(0);
   const [items, setItems] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   
   // Grid properties matching jigsaw specifications
   const [roomWidth, setRoomWidth] = useState(900);
@@ -351,14 +495,19 @@ export default function App() {
   // Layout instances
   const [currentLayoutId, setCurrentLayoutId] = useState(null);
   const [savedLayouts, setSavedLayouts] = useState([]);
+  const [showFloorsDropdown, setShowFloorsDropdown] = useState(false);
+
+  // Multi-floor active configurations
+  const [floors, setFloors] = useState([
+    { id: 'floor_ground', name: 'Ground Floor', items: [], rooms: [], activeRoomId: null, roomWidth: 900, roomHeight: 600 },
+    { id: 'floor_first', name: 'First Floor', items: [], rooms: [], activeRoomId: null, roomWidth: 900, roomHeight: 600 },
+    { id: 'floor_second', name: 'Second Floor', items: [], rooms: [], activeRoomId: null, roomWidth: 900, roomHeight: 600 }
+  ]);
+  const [activeFloorId, setActiveFloorId] = useState('floor_ground');
 
   // Multi-room active configurations
-  const [rooms, setRooms] = useState([
-    { id: 'room_1', name: 'Main Lounge', width: 900, height: 600 },
-    { id: 'room_2', name: 'Kitchen space', width: 800, height: 540 },
-    { id: 'room_3', name: 'Master Bed', width: 800, height: 600 }
-  ]);
-  const [activeRoomId, setActiveRoomId] = useState('room_1');
+  const [rooms, setRooms] = useState([]);
+  const [activeRoomId, setActiveRoomId] = useState(null);
 
   // Zoom factor & Minimap
   const [zoom, setZoom] = useState(1);
@@ -529,6 +678,11 @@ export default function App() {
     };
   }, []);
 
+  // Auto-close color picker on item selection change
+  useEffect(() => {
+    setShowColorPicker(false);
+  }, [selectedId]);
+
   // Listeners
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -673,7 +827,8 @@ export default function App() {
       x: Math.max(0, Math.min(roomWidth - catalogItem.width, x)),
       y: Math.max(0, Math.min(roomHeight - catalogItem.height, y)),
       rotation: 0,
-      zIndex: items.length + 1
+      zIndex: items.length + 1,
+      roomId: activeRoomId
     };
 
     setItems(prev => [...prev, newItem]);
@@ -699,7 +854,8 @@ export default function App() {
       name: `${original.name} (Copy)`,
       x: snap(Math.min(roomWidth - original.width, original.x + 40)),
       y: snap(Math.min(roomHeight - original.height, original.y + 40)),
-      zIndex: items.length + 1
+      zIndex: items.length + 1,
+      roomId: activeRoomId
     };
 
     setItems(prev => [...prev, duplicated]);
@@ -915,25 +1071,118 @@ export default function App() {
     addToast(`Switched active floor section to ${targetRoom.name}`, 'info');
   };
 
+  // Multi-floor configurations switching
+  const handleSwitchFloor = (newFloorId) => {
+    const updatedFloors = floors.map(f => {
+      if (f.id === activeFloorId) {
+        return {
+          ...f,
+          items: items,
+          rooms: rooms,
+          activeRoomId: activeRoomId,
+          roomWidth: roomWidth,
+          roomHeight: roomHeight
+        };
+      }
+      return f;
+    });
+
+    setFloors(updatedFloors);
+
+    const nextFloor = updatedFloors.find(f => f.id === newFloorId);
+    if (nextFloor) {
+      setItems(nextFloor.items || []);
+      setRooms(nextFloor.rooms || []);
+      setActiveRoomId(nextFloor.activeRoomId || null);
+      setRoomWidth(nextFloor.roomWidth || 900);
+      setRoomHeight(nextFloor.roomHeight || 600);
+      setActiveFloorId(newFloorId);
+      setFloorName(nextFloor.name);
+      addToast(`Switched floor to ${nextFloor.name}`, 'info');
+    }
+  };
+
+  const handleAddFloor = () => {
+    const updatedFloors = floors.map(f => {
+      if (f.id === activeFloorId) {
+        return {
+          ...f,
+          items: items,
+          rooms: rooms,
+          activeRoomId: activeRoomId,
+          roomWidth: roomWidth,
+          roomHeight: roomHeight
+        };
+      }
+      return f;
+    });
+
+    const floorNames = ["Ground Floor", "First Floor", "Second Floor", "Third Floor", "Fourth Floor", "Fifth Floor", "Sixth Floor", "Seventh Floor", "Eighth Floor", "Ninth Floor", "Tenth Floor"];
+    const newFloorName = floorNames[updatedFloors.length] || `Floor ${updatedFloors.length}`;
+    const newFloorId = `floor_${Date.now()}`;
+
+    const newFloor = {
+      id: newFloorId,
+      name: newFloorName,
+      items: [],
+      rooms: [],
+      activeRoomId: null,
+      roomWidth: 900,
+      roomHeight: 600
+    };
+
+    setFloors([...updatedFloors, newFloor]);
+    setItems([]);
+    setRooms([]);
+    setActiveRoomId(null);
+    setRoomWidth(900);
+    setRoomHeight(600);
+    setActiveFloorId(newFloorId);
+    setFloorName(newFloorName);
+    addToast(`Added and switched to ${newFloorName}!`, 'success');
+  };
+
   // Load standard pre-built room templates
   const handleSelectTemplateRoom = (tpl) => {
     saveHistoryState();
     setRoomWidth(tpl.w);
     setRoomHeight(tpl.h);
-    setItems([]);
+    // Clear only the active room's items
+    setItems(prev => prev.filter(item => item.roomId && item.roomId !== activeRoomId));
     setSelectedId(null);
     addToast(`Initialized ${tpl.name} layout blueprint`, 'success');
   };
 
   // Persistent save
   const handleSaveLayout = async () => {
+    // Sync current floor states to floors list first
+    const updatedFloors = floors.map(f => {
+      if (f.id === activeFloorId) {
+        return {
+          ...f,
+          items: items,
+          rooms: rooms,
+          activeRoomId: activeRoomId,
+          roomWidth: roomWidth,
+          roomHeight: roomHeight
+        };
+      }
+      return f;
+    });
+
+    setFloors(updatedFloors);
+
     const nameToSave = floorName || 'Modern Apartment Blueprint';
     const payload = {
       id: currentLayoutId,
       name: nameToSave,
       items,
+      rooms,
+      activeRoomId,
       roomWidth,
       roomHeight,
+      floors: updatedFloors,
+      activeFloorId,
       roomFloor: 'blueprint',
       gridEnabled: true,
       snapToGrid: true
@@ -970,10 +1219,78 @@ export default function App() {
     } catch (err) {}
   };
 
+  const handleCreateNewFloor = () => {
+    saveHistoryState();
+    setItems([]);
+    setRooms([]);
+    setActiveRoomId(null);
+    setRoomWidth(900);
+    setRoomHeight(600);
+    setFloorName('New Floor');
+    setCurrentLayoutId(null);
+    setSelectedId(null);
+    setUndoHistory([]);
+    setRedoHistory([]);
+    setIsDirty(false);
+    setShowFloorsDropdown(false);
+    addToast('Created new floor', 'success');
+  };
+
   const handleLoadSavedLayout = (layout) => {
     setItems(layout.items || []);
-    setRoomWidth(layout.roomWidth || 900);
-    setRoomHeight(layout.roomHeight || 600);
+    
+    // Load floors structure
+    if (layout.floors && layout.floors.length > 0) {
+      setFloors(layout.floors);
+      if (layout.activeFloorId) {
+        setActiveFloorId(layout.activeFloorId);
+      } else {
+        setActiveFloorId(layout.floors[0].id);
+      }
+    } else {
+      // Legacy layout format compatibility: setup default Ground, First, and Second floors
+      const defaultFloors = [
+        { 
+          id: 'floor_ground', 
+          name: 'Ground Floor', 
+          items: layout.items || [], 
+          rooms: layout.rooms || [], 
+          activeRoomId: layout.activeRoomId || null, 
+          roomWidth: layout.roomWidth || 900, 
+          roomHeight: layout.roomHeight || 600 
+        },
+        { id: 'floor_first', name: 'First Floor', items: [], rooms: [], activeRoomId: null, roomWidth: 900, roomHeight: 600 },
+        { id: 'floor_second', name: 'Second Floor', items: [], rooms: [], activeRoomId: null, roomWidth: 900, roomHeight: 600 }
+      ];
+      setFloors(defaultFloors);
+      setActiveFloorId('floor_ground');
+    }
+
+    if (layout.rooms && layout.rooms.length > 0) {
+      setRooms(layout.rooms);
+      if (layout.activeRoomId) {
+        setActiveRoomId(layout.activeRoomId);
+        const activeRoom = layout.rooms.find(r => r.id === layout.activeRoomId);
+        if (activeRoom) {
+          setRoomWidth(activeRoom.width || 900);
+          setRoomHeight(activeRoom.height || 600);
+        } else {
+          setRoomWidth(layout.roomWidth || 900);
+          setRoomHeight(layout.roomHeight || 600);
+        }
+      } else {
+        setActiveRoomId(layout.rooms[0].id);
+        setRoomWidth(layout.rooms[0].width || layout.roomWidth || 900);
+        setRoomHeight(layout.rooms[0].height || layout.roomHeight || 600);
+      }
+    } else {
+      // Legacy compatibility: create a default room and switch to it
+      const defaultRoom = { id: 'room_1', name: 'Main Lounge', width: layout.roomWidth || 900, height: layout.roomHeight || 600 };
+      setRooms([defaultRoom]);
+      setActiveRoomId('room_1');
+      setRoomWidth(layout.roomWidth || 900);
+      setRoomHeight(layout.roomHeight || 600);
+    }
     setFloorName(layout.name);
     setCurrentLayoutId(layout.id);
     setSelectedId(null);
@@ -1126,7 +1443,56 @@ export default function App() {
           
           <div className="vertical-divider"></div>
           
-          <button className="breadcrumb-all">&lt; All Floors</button>
+          <div style={{ position: 'relative' }}>
+            <button 
+              className="breadcrumb-all" 
+              onClick={(e) => { e.stopPropagation(); setShowFloorsDropdown(prev => !prev); }}
+            >
+              &lt; All Floors
+            </button>
+            {showFloorsDropdown && (
+              <div className="profile-dropdown-menu" style={{ left: '0', right: 'auto', top: '35px', width: '240px', padding: '12px' }} onClick={(e) => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h4 style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>All Floors</h4>
+                  <button 
+                    onClick={() => { handleAddFloor(); setShowFloorsDropdown(false); }}
+                    style={{ fontSize: '11px', background: '#DBEAFE', color: '#1E40AF', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    + Add Floor
+                  </button>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '200px', overflowY: 'auto' }}>
+                  {floors.map(floor => (
+                    <div 
+                      key={floor.id}
+                      onClick={() => { handleSwitchFloor(floor.id); setShowFloorsDropdown(false); }}
+                      style={{ 
+                        padding: '8px', 
+                        borderRadius: '6px', 
+                        cursor: 'pointer',
+                        background: activeFloorId === floor.id ? '#EFF6FF' : 'transparent',
+                        border: activeFloorId === floor.id ? '1px solid #BFDBFE' : '1px solid transparent',
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: '2px'
+                      }}
+                      onMouseEnter={(e) => { if(activeFloorId !== floor.id) e.currentTarget.style.background = '#F8FAFC'; }}
+                      onMouseLeave={(e) => { if(activeFloorId !== floor.id) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{floor.name}</span>
+                        {activeFloorId === floor.id && <span style={{ fontSize: '10px', background: '#3B82F6', color: '#FFF', padding: '1px 4px', borderRadius: '3px', fontWeight: 700 }}>Active</span>}
+                      </div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {floor.id === activeFloorId ? items.length : (floor.items || []).length} items &bull; {floor.id === activeFloorId ? rooms.length : (floor.rooms || []).length} rooms
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           <span className="breadcrumb-sep">›</span>
           
           {isEditingFloorName ? (
@@ -1315,7 +1681,29 @@ export default function App() {
                         <div
                           key={folder.id}
                           className="card-item"
-                          onClick={() => { setSelectedRoomFolder(folder.id); addToast(`Opened ${folder.name} catalog`, 'info'); }}
+                          onClick={() => {
+                            setSelectedRoomFolder(folder.id);
+                            const existingCount = rooms.filter(r => r.id.startsWith(folder.id)).length;
+                            const newRoomId = `${folder.id}_${Date.now()}`;
+                            const newRoomName = existingCount > 0 ? `${folder.name} ${existingCount + 1}` : folder.name;
+                            
+                            let w = 900;
+                            let h = 600;
+                            if (folder.id === 'kitchen') { w = 800; h = 540; }
+                            else if (folder.id === 'bedroom') { w = 800; h = 600; }
+                            else if (folder.id === 'kids') { w = 700; h = 500; }
+                            else if (folder.id === 'bathroom') { w = 600; h = 480; }
+                            else if (folder.id === 'dining') { w = 800; h = 540; }
+                            else if (folder.id === 'hallway') { w = 500; h = 700; }
+                            else if (folder.id === 'office') { w = 800; h = 600; }
+                            
+                            const newRoom = { id: newRoomId, name: newRoomName, width: w, height: h };
+                            setRooms(prev => [...prev, newRoom]);
+                            setActiveRoomId(newRoomId);
+                            setRoomWidth(w);
+                            setRoomHeight(h);
+                            addToast(`Added ${newRoomName} section!`, 'success');
+                          }}
                           style={{ animationDelay: `${idx * 40}ms` }}
                         >
                           <div className="card-img-container">
@@ -1514,7 +1902,7 @@ export default function App() {
                 
                 {/* Persistence List inside Furnish drawer */}
                 <h3 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                  Saved Layouts
+                  Saved Floors
                 </h3>
 
                 <div className="saved-layouts-section">
@@ -1556,16 +1944,56 @@ export default function App() {
         {/* CANVAS WORKSPACE AREA */}
         <section className="canvas-container" onClick={() => setSelectedId(null)}>
 
-          <div className="room-wrapper" style={{ transform: `scale(${zoom})`, transformOrigin: 'center center', transition: 'transform 0.15s ease' }}>
+          {rooms.length === 0 ? (
+            <div className="empty-canvas-state" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              color: 'var(--text-secondary)',
+              padding: '40px',
+              textAlign: 'center',
+              animation: 'pl-fade-up 0.4s ease both'
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: '#EFF6FF',
+                color: '#2563EB',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px',
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.1)'
+              }}>
+                <Home size={32} />
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>Your Floor Plan is Empty</h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '320px', lineHeight: '1.6', marginBottom: '20px' }}>
+                Open the <strong>Rooms</strong> tab in the sidebar and select a room category to add your first room and start designing!
+              </p>
+              <button 
+                onClick={() => { setActiveTab('Rooms'); setSelectedRoomFolder(null); }}
+                style={{
+                  background: '#2563EB',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)'
+                }}
+              >
+                Browse Room Types
+              </button>
+            </div>
+          ) : (
+            <div className="room-wrapper" style={{ transform: `scale(${zoom})`, transformOrigin: 'center center', transition: 'transform 0.15s ease' }}>
             
-            {/* Metric Rulers */}
-            <div className="ruler-top">
-              {renderRulerTicks('top', roomWidth)}
-            </div>
-            <div className="ruler-left">
-              {renderRulerTicks('left', roomHeight)}
-            </div>
-            <div className="ruler-corner"></div>
 
             {/* Outer Wall Dimensions (matching inspiration image) */}
             <div className="room-outer-dimensions">
@@ -1627,13 +2055,8 @@ export default function App() {
                 if (e.target.id === 'room-blueprint-canvas') setSelectedId(null);
               }}
             >
-              {/* Dynamic room square meter label */}
-              <div className="room-label-centered">
-                Room ({((roomWidth * roomHeight) / 10000).toFixed(2)} m²)
-              </div>
-
               {/* Placed Furniture Elements */}
-              {items.map(item => {
+              {items.filter(item => !item.roomId || item.roomId === activeRoomId).map(item => {
                 const isSelected = item.id === selectedId;
                 const isFavourite = !!favourites[item.id];
                 return (
@@ -1698,10 +2121,8 @@ export default function App() {
                             icon: <Palette size={13} />, 
                             title: "Style Color", 
                             onClick: () => {
-                              const colors = ['#BFDBFE', '#FED7AA', '#FDE68A', '#A7F3D0', '#DDD6FE', '#FBCFE8', '#FFFFFF'];
-                              const nextColor = colors[(colors.indexOf(item.color) + 1) % colors.length];
-                              handleUpdateItemProperty(item.id, 'color', nextColor);
-                              addToast('Style refreshed', 'success');
+                              setShowColorPicker(prev => !prev);
+                              addToast('Custom Color Customizer active!', 'info');
                             }
                           },
                           { 
@@ -1891,6 +2312,7 @@ export default function App() {
 
             </div>
           </div>
+        )}
 
           {/* ZOOM CONTROL BAR (RIGHT STRIP) */}
           <div className="zoom-strip-right">
@@ -1958,6 +2380,70 @@ export default function App() {
               />
               <span className="prop-input-label" style={{ fontSize: '11px' }}>cm</span>
             </div>
+
+            <div className="prop-input-group" style={{ position: 'relative' }}>
+              <span className="prop-input-label">Color:</span>
+              <button 
+                className="prop-color-swatch-circle" 
+                style={{ backgroundColor: activeItem.color || '#BFDBFE' }}
+                onClick={() => setShowColorPicker(!showColorPicker)}
+                title="Customize furniture color"
+              />
+              {showColorPicker && (
+                <div className="premium-color-popup" onMouseDown={e => e.stopPropagation()}>
+                  <div className="color-popup-header">
+                    <span>Customize Color</span>
+                    <button className="color-popup-close" onClick={() => setShowColorPicker(false)}>&times;</button>
+                  </div>
+                  
+                  {/* Preset Swatches Grid ("Direct circles of colors") */}
+                  <div className="color-preset-grid">
+                    {[
+                      '#BFDBFE', '#FED7AA', '#FDE68A', '#A7F3D0', '#DDD6FE', '#FBCFE8', 
+                      '#2563EB', '#16A34A', '#DC2626', '#D97706', '#7C3AED', '#475569', 
+                      '#FFFFFF', '#1E293B', '#8B5A2B', '#D7B58B'
+                    ].map(col => (
+                      <button 
+                        key={col}
+                        className={`color-preset-circle ${activeItem.color === col ? 'active' : ''}`}
+                        style={{ backgroundColor: col }}
+                        onClick={() => {
+                          handleUpdateItemProperty(activeItem.id, 'color', col);
+                          addToast('Color updated', 'success');
+                        }}
+                        title={col}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="color-popup-divider" />
+
+                  {/* Spectrum Circle & Color Code input */}
+                  <div className="color-custom-row">
+                    <div className="custom-picker-wrapper" title="Open Custom Color Wheel">
+                      <input 
+                        type="color" 
+                        className="native-color-wheel"
+                        value={activeItem.color || '#BFDBFE'} 
+                        onChange={(e) => handleUpdateItemProperty(activeItem.id, 'color', e.target.value)} 
+                      />
+                      <span className="picker-wheel-label">Color Wheel</span>
+                    </div>
+
+                    <div className="custom-input-wrapper">
+                      <span className="custom-input-label">Hex Code:</span>
+                      <input 
+                        type="text" 
+                        className="custom-hex-field" 
+                        value={activeItem.color || '#BFDBFE'} 
+                        onChange={(e) => handleUpdateItemProperty(activeItem.id, 'color', e.target.value)}
+                        placeholder="#HEX"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
             
             <div style={{ marginLeft: 'auto' }}>
               <button 
@@ -1971,41 +2457,44 @@ export default function App() {
             </div>
           </div>
         )}
+
       </div>
 
       {/* FLOATING ACTIVE ROOM SWITCHER (DRAGGABLE ANYWHERE IN THE WHOLE PAGE) */}
-      <div 
-        className="floating-room-switcher" 
-        style={roomSwitcherPos.x !== null ? { left: `${roomSwitcherPos.x}px`, top: `${roomSwitcherPos.y}px`, transform: 'none', right: 'auto', margin: '0' } : {}}
-        onMouseDown={handleRoomSwitcherMouseDown}
-        onClick={e => e.stopPropagation()}
-      >
-        {rooms.map(r => (
-          <button
-            key={r.id}
-            className={`floating-room-tab ${activeRoomId === r.id ? 'active' : ''}`}
-            onClick={() => handleSwitchRoomTab(r.id)}
-          >
-            {r.name}
-            <span className="room-tab-badge">&bull; {activeRoomId === r.id ? items.length : 0}</span>
-          </button>
-        ))}
-        <button 
-          className="floating-room-add-btn" 
-          onClick={() => {
-            const nextId = `room_${Date.now()}`;
-            const nextName = `Room Section ${rooms.length + 1}`;
-            setRooms([...rooms, { id: nextId, name: nextName, width: 800, height: 600 }]);
-            addToast(`Added ${nextName}`, 'success');
-          }}
-          title="Add floor division"
+      {rooms.length > 0 && (
+        <div 
+          className="floating-room-switcher" 
+          style={roomSwitcherPos.x !== null ? { left: `${roomSwitcherPos.x}px`, top: `${roomSwitcherPos.y}px`, transform: 'none', right: 'auto', margin: '0' } : {}}
+          onMouseDown={handleRoomSwitcherMouseDown}
+          onClick={e => e.stopPropagation()}
         >
-          <Plus size={14} />
-        </button>
-      </div>
+          {rooms.map(r => (
+            <button
+              key={r.id}
+              className={`floating-room-tab ${activeRoomId === r.id ? 'active' : ''}`}
+              onClick={() => handleSwitchRoomTab(r.id)}
+            >
+              {r.name}
+              <span className="room-tab-badge">&bull; {items.filter(item => item.roomId === r.id || (!item.roomId && r.id === 'room_1')).length}</span>
+            </button>
+          ))}
+          <button 
+            className="floating-room-add-btn" 
+            onClick={() => {
+              const nextId = `room_${Date.now()}`;
+              const nextName = `Room Section ${rooms.length + 1}`;
+              setRooms([...rooms, { id: nextId, name: nextName, width: 800, height: 600 }]);
+              addToast(`Added ${nextName}`, 'success');
+            }}
+            title="Add floor division"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+      )}
 
       {/* DRAGGABLE MINIMAP / ROOM FILLED TRACKER (DRAGGABLE ANYWHERE IN THE WHOLE PAGE) */}
-      {showMinimap && (
+      {showMinimap && rooms.length > 0 && (
         <div 
           className="minimap-card"
           style={minimapPos.x !== null ? { left: `${minimapPos.x}px`, top: `${minimapPos.y}px`, bottom: 'auto', right: 'auto' } : {}}
@@ -2015,7 +2504,7 @@ export default function App() {
             <MapPin size={10} />
           </button>
           <div className="minimap-replica-room">
-            {items.map(item => (
+            {items.filter(item => !item.roomId || item.roomId === activeRoomId).map(item => (
               <div
                 key={item.id}
                 className="minimap-replica-item"
@@ -2041,6 +2530,8 @@ export default function App() {
           <MapPin size={14} style={{ margin: 'auto' }} />
         </button>
       )}
+
+
 
       {/* KEYBOARD SHORTCUTS MODAL */}
       {showShortcutsModal && (

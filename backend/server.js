@@ -60,7 +60,20 @@ app.get('/api/layouts', async (req, res) => {
 
 // POST /api/layouts - Save a layout
 app.post('/api/layouts', async (req, res) => {
-  const { id, name, items, roomWidth, roomHeight, roomFloor, gridEnabled, snapToGrid } = req.body;
+  const { 
+    id, 
+    name, 
+    items, 
+    rooms,
+    activeRoomId,
+    roomWidth, 
+    roomHeight, 
+    floors,
+    activeFloorId,
+    roomFloor, 
+    gridEnabled, 
+    snapToGrid 
+  } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: 'Layout name is required.' });
@@ -72,8 +85,12 @@ app.post('/api/layouts', async (req, res) => {
     id: layoutId,
     name,
     items: items || [],
+    rooms: rooms || [],
+    activeRoomId: activeRoomId || null,
     roomWidth: roomWidth || 800,
     roomHeight: roomHeight || 600,
+    floors: floors || [],
+    activeFloorId: activeFloorId || null,
     roomFloor: roomFloor || 'wood',
     gridEnabled: gridEnabled !== undefined ? gridEnabled : true,
     snapToGrid: snapToGrid !== undefined ? snapToGrid : false,
