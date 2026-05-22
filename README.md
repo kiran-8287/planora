@@ -108,6 +108,46 @@ To share your live blueprint layouts with remote users or project evaluators:
     ```
 *   Share the secure `https://...ngrok-free.app` URL with anyone!
 
+
+---
+
+## 🚀 Deployment to GitHub Pages
+
+Planora is fully configured to be deployed as a static client-side web application on GitHub Pages. In this environment, layout designs are saved directly inside your browser's `localStorage` (complete with optimistic conflict resolution) without requiring a running Express server.
+
+### Option A: Fully Automated via GitHub Actions (Recommended)
+We have configured a CI/CD pipeline that automatically builds and deploys Planora to GitHub Pages when you push code to your main branch.
+
+1. **Commit and Push:** Push your local commits to your GitHub repository:
+   ```bash
+   git add .
+   git commit -m "Configure GitHub Pages deployment"
+   git push origin main
+   ```
+2. **Enable Actions in GitHub Settings:**
+   * Go to your repository page on GitHub.
+   * Click on the **Settings** tab.
+   * On the left sidebar, click **Pages** (under the "Code and automation" section).
+   * In the **Build and deployment** section, under **Source**, select **GitHub Actions** from the dropdown menu.
+3. **Verify:**
+   * Click on the **Actions** tab at the top of your GitHub repository.
+   * You will see the **Deploy to GitHub Pages** workflow running.
+   * Once completed, it will print your hosted website URL (e.g., `https://kiran-8287.github.io/planora/`).
+
+### Option B: Manual Local Deployment
+If you prefer to compile and deploy manually from your local command line:
+
+1. Navigate to the `frontend/` directory:
+   ```bash
+   cd frontend
+   ```
+2. Run the deployment script:
+   ```bash
+   npm run deploy
+   ```
+   *Note:* This script automatically runs a production build (`predeploy`) and pushes the compiled `dist/` folder to the `gh-pages` branch on your GitHub repository.
+3. Go to **Settings -> Pages** in your GitHub repository and ensure **Deploy from a branch** is selected with the branch set to `gh-pages`.
+
 ---
 
 ## 🛠️ The Tech Architecture

@@ -10,6 +10,82 @@ import {
 
 const GRID_SIZE = 20;
 
+// Local Storage Manager for layout persistence (GitHub Pages & local fallback)
+const LOCAL_STORAGE_KEY = 'roomplanner_layouts';
+
+const localLayoutStorage = {
+  getLayouts: () => {
+    try {
+      const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const layouts = data ? JSON.parse(data) : [];
+      return layouts.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+    } catch (e) {
+      console.error('Failed to load layouts from localStorage', e);
+      return [];
+    }
+  },
+
+  saveLayout: (layoutData) => {
+    try {
+      const layouts = localLayoutStorage.getLayouts();
+      const layoutId = layoutData.id || (crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15));
+      
+      const newLayout = {
+        ...layoutData,
+        id: layoutId,
+        lastUpdated: new Date().toISOString()
+      };
+      
+      const index = layouts.findIndex(l => l.id === layoutId);
+      if (index > -1) {
+        // Optimistic locking check (matches backend server.js F-6 behavior)
+        const existingLayout = layouts[index];
+        if (existingLayout && existingLayout.lastUpdated && layoutData.lastUpdated) {
+          const clientTime = new Date(layoutData.lastUpdated).getTime();
+          const localTime = new Date(existingLayout.lastUpdated).getTime();
+          if (clientTime < localTime) {
+            throw new Error('Conflict: This layout has been modified in another session.');
+          }
+        }
+        layouts[index] = newLayout;
+      } else {
+        layouts.push(newLayout);
+      }
+      
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(layouts));
+      return newLayout;
+    } catch (e) {
+      console.error('Failed to save layout to localStorage', e);
+      throw e;
+    }
+  },
+
+  deleteLayout: (id) => {
+    try {
+      const layouts = localLayoutStorage.getLayouts();
+      const filtered = layouts.filter(l => l.id !== id);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
+      return id;
+    } catch (e) {
+      console.error('Failed to delete layout from localStorage', e);
+      throw e;
+    }
+  }
+};
+
+const isStaticDeployment = () => {
+  const hostname = window.location.hostname;
+  return hostname.endsWith('github.io') || 
+         hostname.includes('github') || 
+         (hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '');
+};
+
+const useLocalStorageOnly = isStaticDeployment() || window.location.protocol === 'file:';
+
+if (useLocalStorageOnly) {
+  console.log('[Planora] Running in client-side static mode. Persistent layouts will save directly to browser localStorage.');
+}
+
 // F-2: AABB collision detection helper
 const rectsOverlap = (r1, r2) => {
   return !(
@@ -1743,6 +1819,22 @@ export default function App() {
       lastUpdated
     };
 
+    if (useLocalStorageOnly) {
+      try {
+        const savedLayout = localLayoutStorage.saveLayout(payload);
+        addToast(`Layout "${nameToSave}" successfully saved locally!`, 'success');
+        setCurrentLayoutId(savedLayout.id);
+        setLastUpdated(savedLayout.lastUpdated);
+        setIsDirty(false);
+        fetchLayouts();
+      } catch (err) {
+        addToast(`Error: ${err.message || 'Failed to save layout.'}`, 'error');
+      } finally {
+        setIsSaving(false);
+      }
+      return;
+    }
+
     try {
       const response = await fetch('/api/layouts', {
         method: 'POST',
@@ -1757,25 +1849,53 @@ export default function App() {
         setLastUpdated(result.layout.lastUpdated);
         setIsDirty(false);
         fetchLayouts();
-      } else {
-        const errorMsg = result.error || 'Failed to save layout.';
+      } else if (response.status === 409) {
+        const errorMsg = result.error || 'Conflict: This layout has been modified by another session.';
         addToast(`Error: ${errorMsg}`, 'error');
+      } else {
+        const savedLayout = localLayoutStorage.saveLayout(payload);
+        addToast(`Server error. Layout saved locally as fallback!`, 'warning');
+        setCurrentLayoutId(savedLayout.id);
+        setLastUpdated(savedLayout.lastUpdated);
+        setIsDirty(false);
+        fetchLayouts();
       }
     } catch (err) {
-      addToast('Network error: server unreachable', 'error');
+      try {
+        const savedLayout = localLayoutStorage.saveLayout(payload);
+        addToast(`Server unreachable. Layout saved locally!`, 'warning');
+        setCurrentLayoutId(savedLayout.id);
+        setLastUpdated(savedLayout.lastUpdated);
+        setIsDirty(false);
+        fetchLayouts();
+      } catch (localErr) {
+        addToast('Error: Failed to save layout locally', 'error');
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   const fetchLayouts = async () => {
+    if (useLocalStorageOnly) {
+      const data = localLayoutStorage.getLayouts();
+      setSavedLayouts(data);
+      return;
+    }
+
     try {
       const response = await fetch('/api/layouts');
       if (response.ok) {
         const data = await response.json();
         setSavedLayouts(data);
+      } else {
+        const data = localLayoutStorage.getLayouts();
+        setSavedLayouts(data);
       }
-    } catch (err) {}
+    } catch (err) {
+      const data = localLayoutStorage.getLayouts();
+      setSavedLayouts(data);
+    }
   };
 
   const handleCreateNewFloor = () => {
@@ -1867,6 +1987,22 @@ export default function App() {
       'Delete Saved Design?',
       'Are you sure you want to delete this custom room design permanently? This cannot be undone.',
       async () => {
+        if (useLocalStorageOnly) {
+          try {
+            localLayoutStorage.deleteLayout(id);
+            addToast('State removed successfully from local storage', 'info');
+            if (currentLayoutId === id) {
+              setCurrentLayoutId(null);
+              setLastUpdated(null);
+              setIsDirty(false);
+            }
+            fetchLayouts();
+          } catch (err) {
+            addToast('Error: Failed to delete layout locally', 'error');
+          }
+          return;
+        }
+
         try {
           const response = await fetch(`/api/layouts/${id}`, { method: 'DELETE' });
           if (response.ok) {
@@ -1878,11 +2014,28 @@ export default function App() {
             }
             fetchLayouts();
           } else {
-            const result = await response.json();
-            addToast(`Failed to delete layout: ${result.error || 'Unknown error'}`, 'error');
+            localLayoutStorage.deleteLayout(id);
+            addToast('State removed locally', 'info');
+            if (currentLayoutId === id) {
+              setCurrentLayoutId(null);
+              setLastUpdated(null);
+              setIsDirty(false);
+            }
+            fetchLayouts();
           }
         } catch (err) {
-          addToast('Network error: failed to delete layout', 'error');
+          try {
+            localLayoutStorage.deleteLayout(id);
+            addToast('Server unreachable. State removed locally', 'info');
+            if (currentLayoutId === id) {
+              setCurrentLayoutId(null);
+              setLastUpdated(null);
+              setIsDirty(false);
+            }
+            fetchLayouts();
+          } catch (localErr) {
+            addToast('Network error: failed to delete layout', 'error');
+          }
         }
       }
     );
