@@ -2,13 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
+const { randomUUID } = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
 
 // Enable CORS and JSON body parsing
 app.use(cors());
-app.use(express.json());
+// Increase JSON body limit to handle larger layouts
+app.use(express.json({ limit: '5mb' }));
 
 // Path to store layouts
 const DATA_DIR = path.join(__dirname, 'data');
@@ -75,12 +77,44 @@ app.post('/api/layouts', async (req, res) => {
     snapToGrid 
   } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ error: 'Layout name is required.' });
+  // Basic payload validation
+  if (!name || typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: 'Layout name is required and must be a non‑empty string.' });
+  }
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ error: 'Items must be an array.' });
+  }
+  if (items.length > 500) {
+    return res.status(400).json({ error: 'Layout cannot contain more than 500 items.' });
+  }
+
+  // Use a UUID for guaranteed uniqueness (prevents duplicate IDs on rapid saves)
+  const layoutId = id || randomUUID();
+  const filePath = path.join(LAYOUTS_DIR, `${layoutId}.json`);
+
+  // Optimistic locking check (F-6)
+  if (id) {
+    try {
+      const existingData = await fs.readFile(filePath, 'utf8');
+      const existingLayout = JSON.parse(existingData);
+      if (existingLayout && existingLayout.lastUpdated) {
+        const clientTime = req.body.lastUpdated ? new Date(req.body.lastUpdated).getTime() : 0;
+        const serverTime = new Date(existingLayout.lastUpdated).getTime();
+        if (clientTime < serverTime) {
+          return res.status(409).json({
+            error: 'Conflict: This layout has been modified by another session. Please reload.',
+            lastUpdated: existingLayout.lastUpdated
+          });
+        }
+      }
+    } catch (readErr) {
+      if (readErr.code !== 'ENOENT') {
+        console.error('Error checking existing layout:', readErr);
+      }
+    }
   }
 
   // Create layout object
-  const layoutId = id || `layout_${Date.now()}`;
   const newLayout = {
     id: layoutId,
     name,
@@ -96,8 +130,6 @@ app.post('/api/layouts', async (req, res) => {
     snapToGrid: snapToGrid !== undefined ? snapToGrid : false,
     lastUpdated: new Date().toISOString()
   };
-
-  const filePath = path.join(LAYOUTS_DIR, `${layoutId}.json`);
 
   try {
     await fs.writeFile(filePath, JSON.stringify(newLayout, null, 2), 'utf8');
@@ -119,8 +151,12 @@ app.delete('/api/layouts/:id', async (req, res) => {
     console.log(`✓ Deleted layout ${layoutId}`);
     res.json({ message: 'Layout deleted successfully.', id: layoutId });
   } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log(`✓ Layout ${layoutId} was already deleted or did not exist.`);
+      return res.json({ message: 'Layout deleted successfully.', id: layoutId });
+    }
     console.error(`Error deleting layout ${layoutId}:`, err);
-    res.status(500).json({ error: 'Failed to delete layout. Check if the layout exists.' });
+    res.status(500).json({ error: 'Failed to delete layout.' });
   }
 });
 

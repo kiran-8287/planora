@@ -10,6 +10,171 @@ import {
 
 const GRID_SIZE = 20;
 
+// F-2: AABB collision detection helper
+const rectsOverlap = (r1, r2) => {
+  return !(
+    r1.x + r1.width <= r2.x ||
+    r2.x + r2.width <= r1.x ||
+    r1.y + r1.height <= r2.y ||
+    r2.y + r2.height <= r1.y
+  );
+};
+
+const FurnitureItem = React.memo(({ 
+  item, 
+  isSelected, 
+  isFavourite, 
+  is3DMode, 
+  handleMouseDown, 
+  handleResizeStart, 
+  handleRotateStart,
+  handleFlipItem,
+  handleDuplicateItem,
+  handleToggleFavorite,
+  handleUpdateItemProperty,
+  handleDeleteItem,
+  setShowColorPicker,
+  addToast,
+  renderFurnitureSvg,
+  RotateCw,
+  Palette,
+  Shuffle,
+  Copy,
+  Heart,
+  Trash2
+}) => {
+  return (
+    <div
+      id={`placed-item-${item.id}`}
+      className={`placed-item placed-item-enter ${isSelected ? 'selected' : ''}`}
+      style={{
+        left: `${item.x}px`,
+        top: `${item.y}px`,
+        width: `${item.width}px`,
+        height: `${item.height}px`,
+        transform: is3DMode
+          ? `rotate(${item.rotation || 0}deg) translate3d(0, 0, ${item.elevation || 0}px)`
+          : `rotate(${item.rotation || 0}deg)`,
+        transformStyle: is3DMode ? 'preserve-3d' : 'flat',
+        boxShadow: is3DMode
+          ? `0 1px 0 #CBD5E1, 0 2px 0 #94A3B8, 0 3px 0 #64748B, 0 4px 0 #475569, 0 ${4 + (item.elevation || 0)/10}px 10px rgba(15,23,42,0.25)`
+          : 'none',
+        transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease',
+        zIndex: item.zIndex || 1
+      }}
+      onMouseDown={(e) => handleMouseDown(e, item)}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="placed-svg-wrapper">
+        {renderFurnitureSvg(item.type, item.color)}
+      </div>
+
+      {/* LIVE DIMENSION PILL LABELS (WHILE SELECTED) */}
+      {isSelected && (
+        <>
+          <div className="dim-label-blue dim-label-width">
+            {(item.width / 100).toFixed(2)} m
+          </div>
+          <div className="dim-label-blue dim-label-height">
+            {(item.height / 100).toFixed(2)} m
+          </div>
+        </>
+      )}
+
+      {/* TRANSFORM RESIZE HANDLES */}
+      {isSelected && (
+        <div className="premium-handle-layer">
+          {['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(dir => (
+            <div 
+              key={dir} 
+              className={`premium-resize-sq rsq-${dir}`} 
+              onMouseDown={(e) => handleResizeStart(e, item, dir)}
+            />
+          ))}
+
+          {/* ROTATION MECHANISM */}
+          <div className="premium-rotate-connector"></div>
+          <div className="premium-rotate-circle" onMouseDown={(e) => handleRotateStart(e, item)}>
+            <RotateCw size={8} style={{ color: '#2563EB' }} />
+          </div>
+          <div className="premium-rotate-badge">
+            {item.rotation || 0}°
+          </div>
+        </div>
+      )}
+
+      {/* CURVED CIRCULAR ACTION MENU (CROWN ARC ABOVE THE SELECTED ITEM) */}
+      {isSelected && (
+        <div className="curved-action-arc-layer" onMouseDown={e => e.stopPropagation()}>
+          {[
+            { 
+              icon: <Palette size={13} />, 
+              title: "Style Color", 
+              onClick: () => {
+                setShowColorPicker(prev => !prev);
+                addToast('Custom Color Customizer active!', 'info');
+              }
+            },
+            { 
+              icon: <Shuffle size={13} />, 
+              title: "Flip", 
+              onClick: () => handleFlipItem(item.id) 
+            },
+            { 
+              icon: <Copy size={13} />, 
+              title: "Duplicate", 
+              onClick: () => handleDuplicateItem(item.id) 
+            },
+            { 
+              icon: <Heart size={13} fill={isFavourite ? '#EF4444' : 'none'} style={{ color: isFavourite ? '#EF4444' : 'inherit' }} />, 
+              title: "Favorite", 
+              onClick: () => handleToggleFavorite(item.id) 
+            },
+            { 
+              icon: <RotateCw size={13} />, 
+              title: "Rotate 90°", 
+              onClick: () => handleUpdateItemProperty(item.id, 'rotation', ((item.rotation || 0) + 90) % 360) 
+            },
+            { 
+              icon: <Trash2 size={13} style={{ color: '#EF4444' }} />, 
+              title: "Delete", 
+              onClick: () => handleDeleteItem(item.id),
+              isDelete: true 
+            }
+          ].map((btn, btnIdx, arr) => {
+            const R = Math.max(item.width, item.height) / 2 + 40;
+            const startAngle = -150 * Math.PI / 180;
+            const endAngle = -30 * Math.PI / 180;
+            const angle = startAngle + (btnIdx * (endAngle - startAngle) / (arr.length - 1));
+            const cx = item.width / 2;
+            const cy = item.height / 2;
+            const x = cx + R * Math.cos(angle) - 16;
+            const y = cy + R * Math.sin(angle) - 16;
+
+            return (
+              <button
+                key={btnIdx}
+                className={`arc-action-btn ${btn.isDelete ? 'delete-btn' : ''}`}
+                style={{
+                  left: `${x}px`,
+                  top: `${y}px`,
+                  position: 'absolute'
+                }}
+                onClick={btn.onClick}
+                title={btn.title}
+              >
+                {btn.icon}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+});
+
+FurnitureItem.displayName = 'FurnitureItem';
+
 // High quality Unsplash images for rooms and categories
 const ROOM_TEMPLATES = [
   { name: 'Living Room', type: 'living', w: 900, h: 600, img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=260&q=80' },
@@ -578,6 +743,8 @@ export default function App() {
     misc: false
   });
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   // Layout instances
   const [currentLayoutId, setCurrentLayoutId] = useState(null);
@@ -1016,50 +1183,87 @@ export default function App() {
     const startY = e.clientY;
     const itemStartX = item.x;
     const itemStartY = item.y;
+    
+    let currentX = itemStartX;
+    let currentY = itemStartY;
+    let animationFrameId = null;
 
     const handleMouseMove = (moveEvent) => {
-      const dx = (moveEvent.clientX - startX) / zoom;
-      const dy = (moveEvent.clientY - startY) / zoom;
-      let nx = snap(itemStartX + dx);
-      let ny = snap(itemStartY + dy);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      animationFrameId = requestAnimationFrame(() => {
+        const dx = (moveEvent.clientX - startX) / zoom;
+        const dy = (moveEvent.clientY - startY) / zoom;
+        let nx = snap(itemStartX + dx);
+        let ny = snap(itemStartY + dy);
 
-      nx = Math.max(0, Math.min(roomWidth - item.width, nx));
-      ny = Math.max(0, Math.min(roomHeight - item.height, ny));
+        nx = Math.max(0, Math.min(roomWidth - item.width, nx));
+        ny = Math.max(0, Math.min(roomHeight - item.height, ny));
 
-      // Calculate dynamic alignment guidelines (within 6px alignment threshold)
-      const currentGuides = [];
-      items.forEach(other => {
-        if (other.id === item.id) return;
-        
-        // Horizontal alignment (x center or edges)
-        if (Math.abs(other.x - nx) < 6) {
-          nx = other.x;
-          currentGuides.push({ type: 'vertical', x: nx, label: `${(nx / 100).toFixed(2)} m` });
-        }
-        if (Math.abs((other.x + other.width) - (nx + item.width)) < 6) {
-          nx = other.x + other.width - item.width;
-          currentGuides.push({ type: 'vertical', x: nx + item.width, label: `${((nx + item.width) / 100).toFixed(2)} m` });
-        }
+        // Calculate dynamic alignment guidelines (within 6px alignment threshold)
+        const currentGuides = [];
+        items.forEach(other => {
+          if (other.id === item.id) return;
+          if (other.roomId !== activeRoomId) return;
+          
+          // Horizontal alignment (x center or edges)
+          if (Math.abs(other.x - nx) < 6) {
+            nx = other.x;
+            currentGuides.push({ type: 'vertical', x: nx, label: `${(nx / 100).toFixed(2)} m` });
+          }
+          if (Math.abs((other.x + other.width) - (nx + item.width)) < 6) {
+            nx = other.x + other.width - item.width;
+            currentGuides.push({ type: 'vertical', x: nx + item.width, label: `${((nx + item.width) / 100).toFixed(2)} m` });
+          }
 
-        // Vertical alignment
-        if (Math.abs(other.y - ny) < 6) {
-          ny = other.y;
-          currentGuides.push({ type: 'horizontal', y: ny, label: `${(ny / 100).toFixed(2)} m` });
-        }
-        if (Math.abs((other.y + other.height) - (ny + item.height)) < 6) {
-          ny = other.y + other.height - item.height;
-          currentGuides.push({ type: 'horizontal', y: ny + item.height, label: `${((ny + item.height) / 100).toFixed(2)} m` });
-        }
+          // Vertical alignment
+          if (Math.abs(other.y - ny) < 6) {
+            ny = other.y;
+            currentGuides.push({ type: 'horizontal', y: ny, label: `${(ny / 100).toFixed(2)} m` });
+          }
+          if (Math.abs((other.y + other.height) - (ny + item.height)) < 6) {
+            ny = other.y + other.height - item.height;
+            currentGuides.push({ type: 'horizontal', y: ny + item.height, label: `${((ny + item.height) / 100).toFixed(2)} m` });
+          }
+        });
+
+        currentX = nx;
+        currentY = ny;
+        setGuides(currentGuides);
+        setItems(prev => prev.map(i => i.id === item.id ? { ...i, x: nx, y: ny } : i));
       });
-
-      setGuides(currentGuides);
-      setItems(prev => prev.map(i => i.id === item.id ? { ...i, x: nx, y: ny } : i));
     };
 
     const handleMouseUp = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       setGuides([]);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+
+      // F-2: Collision check on drag commit
+      if (currentX !== itemStartX || currentY !== itemStartY) {
+        const hasCollision = items.some(other => {
+          if (other.id === item.id) return false;
+          if (other.roomId !== activeRoomId) return false;
+
+          return rectsOverlap(
+            { x: currentX, y: currentY, width: item.width, height: item.height },
+            other
+          );
+        });
+
+        if (hasCollision) {
+          addToast(`Collision detected: cannot place "${item.name}" overlapping another item.`, 'error');
+          // Revert position
+          setItems(prev => prev.map(i => i.id === item.id ? { ...i, x: itemStartX, y: itemStartY } : i));
+        } else {
+          setIsDirty(true);
+        }
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -1093,12 +1297,18 @@ export default function App() {
       if (direction.includes('e')) nw = Math.max(MIN, snap(startW + dx));
       if (direction.includes('s')) nh = Math.max(MIN, snap(startH + dy));
       if (direction.includes('w')) {
-        const cx = snap(Math.min(dx, startW - MIN));
+        let cx = snap(Math.min(dx, startW - MIN));
+        if (startXPos + cx < 0) {
+          cx = -startXPos;
+        }
         nw = startW - cx;
         nx = startXPos + cx;
       }
       if (direction.includes('n')) {
-        const cy = snap(Math.min(dy, startH - MIN));
+        let cy = snap(Math.min(dy, startH - MIN));
+        if (startYPos + cy < 0) {
+          cy = -startYPos;
+        }
         nh = startH - cy;
         ny = startYPos + cy;
       }
@@ -1496,6 +1706,9 @@ export default function App() {
 
   // Persistent save
   const handleSaveLayout = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+
     // Sync current floor states to floors list first
     const updatedFloors = floors.map(f => {
       if (f.id === activeFloorId) {
@@ -1526,7 +1739,8 @@ export default function App() {
       activeFloorId,
       roomFloor: 'blueprint',
       gridEnabled: true,
-      snapToGrid: true
+      snapToGrid: true,
+      lastUpdated
     };
 
     try {
@@ -1540,13 +1754,17 @@ export default function App() {
       if (response.ok) {
         addToast(`Layout "${nameToSave}" successfully saved!`, 'success');
         setCurrentLayoutId(result.layout.id);
+        setLastUpdated(result.layout.lastUpdated);
         setIsDirty(false);
         fetchLayouts();
       } else {
-        addToast('Error persisting state', 'error');
+        const errorMsg = result.error || 'Failed to save layout.';
+        addToast(`Error: ${errorMsg}`, 'error');
       }
     } catch (err) {
       addToast('Network error: server unreachable', 'error');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -1569,6 +1787,7 @@ export default function App() {
     setRoomHeight(600);
     setFloorName('New Floor');
     setCurrentLayoutId(null);
+    setLastUpdated(null);
     setSelectedId(null);
     setUndoHistory([]);
     setRedoHistory([]);
@@ -1634,6 +1853,7 @@ export default function App() {
     }
     setFloorName(layout.name);
     setCurrentLayoutId(layout.id);
+    setLastUpdated(layout.lastUpdated || null);
     setSelectedId(null);
     setUndoHistory([]);
     setRedoHistory([]);
@@ -1653,11 +1873,17 @@ export default function App() {
             addToast('State removed successfully', 'info');
             if (currentLayoutId === id) {
               setCurrentLayoutId(null);
+              setLastUpdated(null);
               setIsDirty(false);
             }
             fetchLayouts();
+          } else {
+            const result = await response.json();
+            addToast(`Failed to delete layout: ${result.error || 'Unknown error'}`, 'error');
           }
-        } catch (err) {}
+        } catch (err) {
+          addToast('Network error: failed to delete layout', 'error');
+        }
       }
     );
   };
@@ -1936,7 +2162,7 @@ export default function App() {
           
           <div className="vertical-divider"></div>
 
-          <button className={`btn-upgrade btn-save-pulsing ${isDirty ? 'dirty' : ''}`} onClick={handleSaveLayout}>
+          <button className="nav-save-btn" onClick={handleSaveLayout}>
             Save Layout
           </button>
 
