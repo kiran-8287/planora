@@ -799,6 +799,7 @@ const LOADING_STATUSES = [
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
   const [loadingStatusIndex, setLoadingStatusIndex] = useState(0);
   const [items, setItems] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -2160,6 +2161,16 @@ export default function App() {
       {/* TOP NAVIGATION BAR */}
       <header className="top-nav">
         <div className="left-cluster">
+          {!showSidebar && (
+            <button 
+              className="nav-tool-btn sidebar-toggle-btn"
+              onClick={() => { setShowSidebar(true); addToast('Sidebar expanded', 'info'); }}
+              title="Expand Sidebar"
+              style={{ marginRight: '8px', background: '#DBEAFE', color: '#1E40AF', borderRadius: '8px' }}
+            >
+              <ChevronRight size={15} />
+            </button>
+          )}
           <a href="#" className="logo-section">
             <Home size={20} className="logo-icon-blue" />
             <span>Planora</span>
@@ -2377,17 +2388,18 @@ export default function App() {
       <div className="workspace-grid with-rooms">
         
         {/* LEFT SIDEBAR */}
-        <aside className="sidebar-left">
-          <div className="sidebar-header-row">
-            <div className="sidebar-title-group">
-              <ArrowLeft size={16} style={{ cursor: 'pointer' }} onClick={() => addToast('Navigating back...', 'info')} />
-              <span>Furnish</span>
+        {showSidebar && (
+          <aside className="sidebar-left">
+            <div className="sidebar-header-row">
+              <div className="sidebar-title-group">
+                <ArrowLeft size={16} style={{ cursor: 'pointer' }} onClick={() => addToast('Navigating back...', 'info')} />
+                <span>Furnish</span>
+              </div>
+              <div className="sidebar-header-actions">
+                <Maximize2 size={15} style={{ marginRight: '6px' }} />
+                <X size={15} onClick={() => { setShowSidebar(false); addToast('Sidebar collapsed', 'info'); }} />
+              </div>
             </div>
-            <div className="sidebar-header-actions">
-              <Maximize2 size={15} style={{ marginRight: '6px' }} />
-              <X size={15} onClick={() => addToast('Sidebar close triggered', 'info')} />
-            </div>
-          </div>
 
           <div className="search-container">
             <Search size={14} className="search-icon" />
@@ -2711,6 +2723,7 @@ export default function App() {
             <span>{items.length} items placed</span>
           </footer>
         </aside>
+      )}
 
         {/* CANVAS WORKSPACE AREA */}
         <section className="canvas-container" onClick={() => setSelectedId(null)}>
