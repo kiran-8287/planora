@@ -139,6 +139,7 @@ const FurnitureItem = React.memo(({
         zIndex: item.zIndex || 1
       }}
       onMouseDown={(e) => handleMouseDown(e, item)}
+      onTouchStart={(e) => handleMouseDown(e, item)}
       onClick={(e) => e.stopPropagation()}
     >
       <div className="placed-svg-wrapper">
@@ -165,12 +166,13 @@ const FurnitureItem = React.memo(({
               key={dir} 
               className={`premium-resize-sq rsq-${dir}`} 
               onMouseDown={(e) => handleResizeStart(e, item, dir)}
+              onTouchStart={(e) => handleResizeStart(e, item, dir)}
             />
           ))}
 
           {/* ROTATION MECHANISM */}
           <div className="premium-rotate-connector"></div>
-          <div className="premium-rotate-circle" onMouseDown={(e) => handleRotateStart(e, item)}>
+          <div className="premium-rotate-circle" onMouseDown={(e) => handleRotateStart(e, item)} onTouchStart={(e) => handleRotateStart(e, item)}>
             <RotateCw size={8} style={{ color: '#2563EB' }} />
           </div>
           <div className="premium-rotate-badge">
@@ -804,6 +806,7 @@ export default function App() {
   const [items, setItems] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   // Grid properties matching jigsaw specifications
   const [roomWidth, setRoomWidth] = useState(900);
@@ -860,11 +863,14 @@ export default function App() {
 
   const handleMinimapMouseDown = (e) => {
     if (e.target.closest('button')) return;
+    const isTouch = e.type === 'touchstart';
+    if (!isTouch && e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    const startEvent = isTouch ? e.touches[0] : e;
+    const startX = startEvent.clientX;
+    const startY = startEvent.clientY;
     
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -875,8 +881,10 @@ export default function App() {
     const initialY = rect.top - parentRect.top;
 
     const handleMouseMove = (moveEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
+      const dx = currentEvent.clientX - startX;
+      const dy = currentEvent.clientY - startY;
       
       let newX = initialX + dx;
       let newY = initialY + dy;
@@ -891,23 +899,36 @@ export default function App() {
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      if (isTouch) {
+        document.removeEventListener('touchmove', handleMouseMove);
+        document.removeEventListener('touchend', handleMouseUp);
+      } else {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    if (isTouch) {
+      document.addEventListener('touchmove', handleMouseMove, { passive: false });
+      document.addEventListener('touchend', handleMouseUp);
+    } else {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   const [roomSwitcherPos, setRoomSwitcherPos] = useState({ x: null, y: null });
 
   const handleRoomSwitcherMouseDown = (e) => {
     if (e.target.closest('button')) return;
+    const isTouch = e.type === 'touchstart';
+    if (!isTouch && e.button !== 0) return;
     e.preventDefault();
     e.stopPropagation();
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    const startEvent = isTouch ? e.touches[0] : e;
+    const startX = startEvent.clientX;
+    const startY = startEvent.clientY;
     
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -918,8 +939,10 @@ export default function App() {
     const initialY = rect.top - parentRect.top;
 
     const handleMouseMove = (moveEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
+      const dx = currentEvent.clientX - startX;
+      const dy = currentEvent.clientY - startY;
       
       let newX = initialX + dx;
       let newY = initialY + dy;
@@ -934,12 +957,22 @@ export default function App() {
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      if (isTouch) {
+        document.removeEventListener('touchmove', handleMouseMove);
+        document.removeEventListener('touchend', handleMouseUp);
+      } else {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    if (isTouch) {
+      document.addEventListener('touchmove', handleMouseMove, { passive: false });
+      document.addEventListener('touchend', handleMouseUp);
+    } else {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   // Alignment Guides
@@ -1107,13 +1140,80 @@ export default function App() {
 
   // ── RECENTER: reset zoom and scroll canvas to center ──
   const handleRecenter = () => {
-    setZoom(1);
+    if (window.innerWidth <= 768) {
+      const containerWidth = window.innerWidth - 32;
+      const fitZoom = Math.min(1, containerWidth / (roomWidth + 120));
+      setZoom(Math.max(0.2, Math.round(fitZoom * 10) / 10));
+    } else {
+      setZoom(1);
+    }
     setSelectedId(null);
     const container = document.querySelector('.canvas-container');
     if (container) {
       container.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
     }
     addToast('View recentered', 'info');
+  };
+
+  // Auto-fit zoom on mobile viewports
+  useEffect(() => {
+    const handleAutoZoom = () => {
+      if (window.innerWidth <= 768) {
+        const containerWidth = window.innerWidth - 32;
+        const fitZoom = Math.min(1, containerWidth / (roomWidth + 120));
+        setZoom(Math.max(0.2, Math.round(fitZoom * 10) / 10));
+      }
+    };
+    handleAutoZoom();
+    window.addEventListener('resize', handleAutoZoom);
+    return () => window.removeEventListener('resize', handleAutoZoom);
+  }, [roomWidth]);
+
+  const handleMeasureStart = (e) => {
+    if (!isMeasuring) return;
+    const isTouch = e.type === 'touchstart';
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const canvas = document.getElementById('room-blueprint-canvas');
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const startEvent = isTouch ? e.touches[0] : e;
+    
+    const clickX = (startEvent.clientX - rect.left) / zoom;
+    const clickY = (startEvent.clientY - rect.top) / zoom;
+    const sx = snap(clickX);
+    const sy = snap(clickY);
+    
+    setMeasureStart({ x: sx, y: sy });
+    setMeasureEnd({ x: sx, y: sy });
+    
+    const handleMouseMove = (moveEvent) => {
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
+      const mx = (currentEvent.clientX - rect.left) / zoom;
+      const my = (currentEvent.clientY - rect.top) / zoom;
+      setMeasureEnd({ x: snap(mx), y: snap(my) });
+    };
+    
+    const handleMouseUp = () => {
+      if (isTouch) {
+        window.removeEventListener('touchmove', handleMouseMove);
+        window.removeEventListener('touchend', handleMouseUp);
+      } else {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      }
+    };
+    
+    if (isTouch) {
+      window.addEventListener('touchmove', handleMouseMove, { passive: false });
+      window.addEventListener('touchend', handleMouseUp);
+    } else {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   // ── CLEAR ROOM: remove all items from active room ──
@@ -1252,12 +1352,14 @@ export default function App() {
 
   // Drag operations
   const handleMouseDown = (e, item) => {
-    if (e.button !== 0) return; // Left click only
+    const isTouch = e.type === 'touchstart';
+    if (!isTouch && e.button !== 0) return; // Left click only
     setSelectedId(item.id);
     saveHistoryState();
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    const startEvent = isTouch ? e.touches[0] : e;
+    const startX = startEvent.clientX;
+    const startY = startEvent.clientY;
     const itemStartX = item.x;
     const itemStartY = item.y;
     
@@ -1266,13 +1368,15 @@ export default function App() {
     let animationFrameId = null;
 
     const handleMouseMove = (moveEvent) => {
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
       
       animationFrameId = requestAnimationFrame(() => {
-        const dx = (moveEvent.clientX - startX) / zoom;
-        const dy = (moveEvent.clientY - startY) / zoom;
+        const dx = (currentEvent.clientX - startX) / zoom;
+        const dy = (currentEvent.clientY - startY) / zoom;
         let nx = snap(itemStartX + dx);
         let ny = snap(itemStartY + dy);
 
@@ -1318,8 +1422,13 @@ export default function App() {
         cancelAnimationFrame(animationFrameId);
       }
       setGuides([]);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      if (isTouch) {
+        window.removeEventListener('touchmove', handleMouseMove);
+        window.removeEventListener('touchend', handleMouseUp);
+      } else {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      }
 
       // F-2: Collision check on drag commit
       if (currentX !== itemStartX || currentY !== itemStartY) {
@@ -1343,26 +1452,35 @@ export default function App() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    if (isTouch) {
+      window.addEventListener('touchmove', handleMouseMove, { passive: false });
+      window.addEventListener('touchend', handleMouseUp);
+    } else {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   // Resize Corners and Midpoints (8-handle system)
   const handleResizeStart = (e, item, direction) => {
+    const isTouch = e.type === 'touchstart';
     e.preventDefault();
     e.stopPropagation();
     saveHistoryState();
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    const startEvent = isTouch ? e.touches[0] : e;
+    const startX = startEvent.clientX;
+    const startY = startEvent.clientY;
     const startW = item.width;
     const startH = item.height;
     const startXPos = item.x;
     const startYPos = item.y;
 
     const handleMouseMove = (moveEvent) => {
-      const dx = (moveEvent.clientX - startX) / zoom;
-      const dy = (moveEvent.clientY - startY) / zoom;
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
+      const dx = (currentEvent.clientX - startX) / zoom;
+      const dy = (currentEvent.clientY - startY) / zoom;
 
       let nw = startW;
       let nh = startH;
@@ -1404,16 +1522,27 @@ export default function App() {
     };
 
     const handleMouseUp = () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      if (isTouch) {
+        window.removeEventListener('touchmove', handleMouseMove);
+        window.removeEventListener('touchend', handleMouseUp);
+      } else {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    if (isTouch) {
+      window.addEventListener('touchmove', handleMouseMove, { passive: false });
+      window.addEventListener('touchend', handleMouseUp);
+    } else {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   // Rotation with 15deg snap
   const handleRotateStart = (e, item) => {
+    const isTouch = e.type === 'touchstart';
     e.preventDefault();
     e.stopPropagation();
     saveHistoryState();
@@ -1424,11 +1553,14 @@ export default function App() {
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
 
-    const startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+    const startEvent = isTouch ? e.touches[0] : e;
+    const startAngle = Math.atan2(startEvent.clientY - cy, startEvent.clientX - cx);
     const startRotation = item.rotation || 0;
 
     const handleMouseMove = (moveEvent) => {
-      const currentAngle = Math.atan2(moveEvent.clientY - cy, moveEvent.clientX - cx);
+      const currentEvent = isTouch ? moveEvent.touches[0] : moveEvent;
+      if (!currentEvent) return;
+      const currentAngle = Math.atan2(currentEvent.clientY - cy, currentEvent.clientX - cx);
       const diff = currentAngle - startAngle;
       let deg = Math.round(startRotation + (diff * 180) / Math.PI);
       deg = (deg % 360 + 360) % 360;
@@ -1438,12 +1570,22 @@ export default function App() {
     };
 
     const handleMouseUp = () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      if (isTouch) {
+        window.removeEventListener('touchmove', handleMouseMove);
+        window.removeEventListener('touchend', handleMouseUp);
+      } else {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    if (isTouch) {
+      window.addEventListener('touchmove', handleMouseMove, { passive: false });
+      window.addEventListener('touchend', handleMouseUp);
+    } else {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
   };
 
   // Switch Room configurations
@@ -2262,67 +2404,77 @@ export default function App() {
         </div>
 
         <div className="right-cluster">
-          <button className="nav-tool-btn" onClick={handleSnapshot} title="Capture snapshot (PNG)"><Camera size={15} /></button>
-          <button className="nav-tool-btn" onClick={handleShare} title="Share layout"><Share2 size={15} /></button>
-          <button className="nav-tool-btn" onClick={() => setShowSettingsModal(true)} title="Settings"><Settings size={15} /></button>
-          
-          <button 
-            className={`nav-tool-btn ${is3DMode ? 'nav-tool-active' : ''}`} 
-            onClick={() => { setIs3DMode(!is3DMode); addToast(is3DMode ? '2D Flat mode active' : 'Isometric 3D mode active!', 'info'); }} 
-            title="Toggle Isometric 3D Mode"
-          ><Box size={15} /></button>
-          
-          <button 
-            className={`nav-tool-btn ${isMeasuring ? 'nav-tool-active' : ''}`} 
-            onClick={() => { 
-              setIsMeasuring(!isMeasuring); 
-              if (!isMeasuring) {
-                setMeasureStart(null);
-                setMeasureEnd(null);
-              }
-              addToast(isMeasuring ? 'Tape Measure deactivated' : 'Tape Measure activated! Click & drag to measure gaps.', 'info'); 
-            }} 
-            title="Tape Measure Tool"
-          ><Ruler size={15} /></button>
-
-          <button 
-            className={`nav-tool-btn ${showBOMDrawer ? 'nav-tool-active' : ''}`} 
-            onClick={() => setShowBOMDrawer(!showBOMDrawer)} 
-            title="Bill of Materials & Costs"
-          ><ShoppingCart size={15} /></button>
-
-          <button 
-            className={`nav-tool-btn ${showGridDots ? 'nav-tool-active' : ''}`} 
-            onClick={() => { setShowGridDots(g => !g); addToast(showGridDots ? 'Grid hidden' : 'Grid visible', 'info'); }} 
-            title="Toggle layout grid"
-          ><LayoutGrid size={15} /></button>
-          <div style={{ position: 'relative' }}>
+          <div className="nav-desktop-tools">
+            <button className="nav-tool-btn" onClick={handleSnapshot} title="Capture snapshot (PNG)"><Camera size={15} /></button>
+            <button className="nav-tool-btn" onClick={handleShare} title="Share layout"><Share2 size={15} /></button>
+            <button className="nav-tool-btn" onClick={() => setShowSettingsModal(true)} title="Settings"><Settings size={15} /></button>
+            
             <button 
-              className="nav-tool-btn" 
-              title="More options"
-              onClick={e => { e.stopPropagation(); setShowMoreOptionsMenu(m => !m); }}
-            ><MoreVertical size={15} /></button>
-            {showMoreOptionsMenu && (
-              <div className="more-options-dropdown" onClick={e => e.stopPropagation()}>
-                <button className="more-option-item" onClick={() => { handleExportPDF(); setShowMoreOptionsMenu(false); }}>
-                  <Printer size={14} /> Export as PDF
-                </button>
-                <button className="more-option-item" onClick={() => { handleSnapshot(); setShowMoreOptionsMenu(false); }}>
-                  <Download size={14} /> Download PNG
-                </button>
-                <button className="more-option-item" onClick={() => { handleShare(); setShowMoreOptionsMenu(false); }}>
-                  <Link2 size={14} /> Copy Share Link
-                </button>
-                <div className="more-option-divider" />
-                <button className="more-option-item" onClick={() => { setIsEditingFloorName(true); setShowMoreOptionsMenu(false); }}>
-                  <Palette size={14} /> Rename Floor
-                </button>
-                <button className="more-option-item danger" onClick={() => { handleClearRoom(); setShowMoreOptionsMenu(false); }}>
-                  <Trash2 size={14} /> Clear Room
-                </button>
-              </div>
-            )}
+              className={`nav-tool-btn ${is3DMode ? 'nav-tool-active' : ''}`} 
+              onClick={() => { setIs3DMode(!is3DMode); addToast(is3DMode ? '2D Flat mode active' : 'Isometric 3D mode active!', 'info'); }} 
+              title="Toggle Isometric 3D Mode"
+            ><Box size={15} /></button>
+            
+            <button 
+              className={`nav-tool-btn ${isMeasuring ? 'nav-tool-active' : ''}`} 
+              onClick={() => { 
+                setIsMeasuring(!isMeasuring); 
+                if (!isMeasuring) {
+                  setMeasureStart(null);
+                  setMeasureEnd(null);
+                }
+                addToast(isMeasuring ? 'Tape Measure deactivated' : 'Tape Measure activated! Click & drag to measure gaps.', 'info'); 
+              }} 
+              title="Tape Measure Tool"
+            ><Ruler size={15} /></button>
+
+            <button 
+              className={`nav-tool-btn ${showBOMDrawer ? 'nav-tool-active' : ''}`} 
+              onClick={() => setShowBOMDrawer(!showBOMDrawer)} 
+              title="Bill of Materials & Costs"
+            ><ShoppingCart size={15} /></button>
+
+            <button 
+              className={`nav-tool-btn ${showGridDots ? 'nav-tool-active' : ''}`} 
+              onClick={() => { setShowGridDots(g => !g); addToast(showGridDots ? 'Grid hidden' : 'Grid visible', 'info'); }} 
+              title="Toggle layout grid"
+            ><LayoutGrid size={15} /></button>
+            <div style={{ position: 'relative' }}>
+              <button 
+                className="nav-tool-btn" 
+                title="More options"
+                onClick={e => { e.stopPropagation(); setShowMoreOptionsMenu(m => !m); }}
+              ><MoreVertical size={15} /></button>
+              {showMoreOptionsMenu && (
+                <div className="more-options-dropdown" onClick={e => e.stopPropagation()}>
+                  <button className="more-option-item" onClick={() => { handleExportPDF(); setShowMoreOptionsMenu(false); }}>
+                    <Printer size={14} /> Export as PDF
+                  </button>
+                  <button className="more-option-item" onClick={() => { handleSnapshot(); setShowMoreOptionsMenu(false); }}>
+                    <Download size={14} /> Download PNG
+                  </button>
+                  <button className="more-option-item" onClick={() => { handleShare(); setShowMoreOptionsMenu(false); }}>
+                    <Link2 size={14} /> Copy Share Link
+                  </button>
+                  <div className="more-option-divider" />
+                  <button className="more-option-item" onClick={() => { setIsEditingFloorName(true); setShowMoreOptionsMenu(false); }}>
+                    <Palette size={14} /> Rename Floor
+                  </button>
+                  <button className="more-option-item danger" onClick={() => { handleClearRoom(); setShowMoreOptionsMenu(false); }}>
+                    <Trash2 size={14} /> Clear Room
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+          
+          <button 
+            className="nav-tool-btn mobile-menu-toggle-btn"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            title="Open Tools Menu"
+          >
+            <SlidersHorizontal size={15} />
+          </button>
           
           <div className="vertical-divider"></div>
 
@@ -2389,7 +2541,9 @@ export default function App() {
         
         {/* LEFT SIDEBAR */}
         {showSidebar && (
-          <aside className="sidebar-left">
+          <>
+            <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)} />
+            <aside className="sidebar-left">
             <div className="sidebar-header-row">
               <div className="sidebar-title-group">
                 <ArrowLeft size={16} style={{ cursor: 'pointer' }} onClick={() => addToast('Navigating back...', 'info')} />
@@ -2723,7 +2877,8 @@ export default function App() {
             <span>{items.length} items placed</span>
           </footer>
         </aside>
-      )}
+      </>
+    )}
 
         {/* CANVAS WORKSPACE AREA */}
         <section className="canvas-container" onClick={() => setSelectedId(null)}>
@@ -2840,34 +2995,8 @@ export default function App() {
                 transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease',
                 cursor: isMeasuring ? 'crosshair' : 'default'
               }}
-              onMouseDown={(e) => {
-                if (!isMeasuring) return;
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const rect = e.currentTarget.getBoundingClientRect();
-                const clickX = (e.clientX - rect.left) / zoom;
-                const clickY = (e.clientY - rect.top) / zoom;
-                const sx = snap(clickX);
-                const sy = snap(clickY);
-                
-                setMeasureStart({ x: sx, y: sy });
-                setMeasureEnd({ x: sx, y: sy });
-                
-                const handleMouseMove = (moveEvent) => {
-                  const mx = (moveEvent.clientX - rect.left) / zoom;
-                  const my = (moveEvent.clientY - rect.top) / zoom;
-                  setMeasureEnd({ x: snap(mx), y: snap(my) });
-                };
-                
-                const handleMouseUp = () => {
-                  window.removeEventListener('mousemove', handleMouseMove);
-                  window.removeEventListener('mouseup', handleMouseUp);
-                };
-                
-                window.addEventListener('mousemove', handleMouseMove);
-                window.addEventListener('mouseup', handleMouseUp);
-              }}
+              onMouseDown={handleMeasureStart}
+              onTouchStart={handleMeasureStart}
               onClick={(e) => {
                 if (isMeasuring) return;
                 if (e.target.id === 'room-blueprint-canvas') setSelectedId(null);
@@ -2898,6 +3027,7 @@ export default function App() {
                       zIndex: item.zIndex || 1
                     }}
                     onMouseDown={(e) => handleMouseDown(e, item)}
+                    onTouchStart={(e) => handleMouseDown(e, item)}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="placed-svg-wrapper">
@@ -2924,12 +3054,13 @@ export default function App() {
                             key={dir} 
                             className={`premium-resize-sq rsq-${dir}`} 
                             onMouseDown={(e) => handleResizeStart(e, item, dir)}
+                            onTouchStart={(e) => handleResizeStart(e, item, dir)}
                           />
                         ))}
 
                         {/* ROTATION MECHANISM */}
                         <div className="premium-rotate-connector"></div>
-                        <div className="premium-rotate-circle" onMouseDown={(e) => handleRotateStart(e, item)}>
+                        <div className="premium-rotate-circle" onMouseDown={(e) => handleRotateStart(e, item)} onTouchStart={(e) => handleRotateStart(e, item)}>
                           <RotateCw size={8} style={{ color: '#2563EB' }} />
                         </div>
                         <div className="premium-rotate-badge">
@@ -3197,7 +3328,7 @@ export default function App() {
             <button className="zoom-strip-btn" onClick={handleRecenter} title="Recenter blueprint focus"><Locate size={16} /></button>
             <div className="zoom-strip-separator"></div>
             <button className="zoom-strip-btn" onClick={() => setZoom(z => Math.min(1.5, z + 0.1))} title="Zoom In"><Plus size={16} /></button>
-            <button className="zoom-strip-btn" onClick={() => setZoom(z => Math.max(0.6, z - 0.1))} title="Zoom Out"><Minus size={16} /></button>
+            <button className="zoom-strip-btn" onClick={() => setZoom(z => Math.max(0.2, z - 0.1))} title="Zoom Out"><Minus size={16} /></button>
           </div>
         </section>
 
@@ -3342,6 +3473,7 @@ export default function App() {
           className="floating-room-switcher" 
           style={roomSwitcherPos.x !== null ? { left: `${roomSwitcherPos.x}px`, top: `${roomSwitcherPos.y}px`, transform: 'none', right: 'auto', margin: '0' } : {}}
           onMouseDown={handleRoomSwitcherMouseDown}
+          onTouchStart={handleRoomSwitcherMouseDown}
           onClick={e => e.stopPropagation()}
         >
           {rooms.map(r => (
@@ -3401,6 +3533,7 @@ export default function App() {
           className="minimap-card"
           style={minimapPos.x !== null ? { left: `${minimapPos.x}px`, top: `${minimapPos.y}px`, bottom: 'auto', right: 'auto' } : {}}
           onMouseDown={handleMinimapMouseDown}
+          onTouchStart={handleMinimapMouseDown}
         >
           <button className="btn-minimap-toggle" onClick={() => setShowMinimap(false)} title="Close minimap">
             <MapPin size={10} />
@@ -3426,6 +3559,7 @@ export default function App() {
           className="btn-minimap-closed-toggle"
           style={minimapPos.x !== null ? { left: `${minimapPos.x}px`, top: `${minimapPos.y}px`, bottom: 'auto', right: 'auto' } : {}}
           onMouseDown={handleMinimapMouseDown}
+          onTouchStart={handleMinimapMouseDown}
           onClick={() => setShowMinimap(true)}
           title="Show minimap"
         >
@@ -3994,6 +4128,144 @@ export default function App() {
                 >
                   Confirm Delete
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MOBILE CONSOLIDATED TOOLS MENU */}
+      {showMobileMenu && (
+        <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
+          <div className="mobile-menu-drawer" onClick={e => e.stopPropagation()}>
+            <div className="mobile-menu-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Home size={18} style={{ color: 'var(--primary)' }} />
+                <span style={{ fontWeight: 800, fontSize: '15px' }}>Planora Tools</span>
+              </div>
+              <button className="btn-modal-close" onClick={() => setShowMobileMenu(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="mobile-menu-content">
+              {/* Floor Switcher Quick Section */}
+              <div className="mobile-menu-section">
+                <div className="mobile-section-title">Floor Selection</div>
+                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '4px 0' }}>
+                  {floors.map(floor => (
+                    <button
+                      key={floor.id}
+                      onClick={() => { handleSwitchFloor(floor.id); setShowMobileMenu(false); }}
+                      className={`mobile-floor-chip ${activeFloorId === floor.id ? 'active' : ''}`}
+                    >
+                      {floor.name}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => { handleAddFloor(); setShowMobileMenu(false); }}
+                    className="mobile-floor-chip add-btn"
+                  >
+                    + Add
+                  </button>
+                </div>
+              </div>
+
+              <div className="mobile-menu-divider"></div>
+
+              {/* Tools Grid */}
+              <div className="mobile-menu-section">
+                <div className="mobile-section-title">Design Tools</div>
+                <div className="mobile-tools-grid">
+                  <button 
+                    className={`mobile-tool-card ${is3DMode ? 'active' : ''}`}
+                    onClick={() => { setIs3DMode(!is3DMode); addToast(is3DMode ? '2D Flat mode active' : 'Isometric 3D mode active!', 'info'); setShowMobileMenu(false); }}
+                  >
+                    <Box size={20} />
+                    <span>3D Isometric</span>
+                  </button>
+                  
+                  <button 
+                    className={`mobile-tool-card ${isMeasuring ? 'active' : ''}`}
+                    onClick={() => { 
+                      setIsMeasuring(!isMeasuring); 
+                      if (!isMeasuring) {
+                        setMeasureStart(null);
+                        setMeasureEnd(null);
+                      }
+                      addToast(isMeasuring ? 'Tape Measure deactivated' : 'Tape Measure activated! Click & drag to measure gaps.', 'info'); 
+                      setShowMobileMenu(false);
+                    }}
+                  >
+                    <Ruler size={20} />
+                    <span>Measure Gaps</span>
+                  </button>
+
+                  <button 
+                    className={`mobile-tool-card ${showGridDots ? 'active' : ''}`}
+                    onClick={() => { setShowGridDots(g => !g); addToast(showGridDots ? 'Grid hidden' : 'Grid visible', 'info'); setShowMobileMenu(false); }}
+                  >
+                    <LayoutGrid size={20} />
+                    <span>Toggle Grid</span>
+                  </button>
+
+                  <button 
+                    className={`mobile-tool-card ${showBOMDrawer ? 'active' : ''}`}
+                    onClick={() => { setShowBOMDrawer(true); setShowMobileMenu(false); }}
+                  >
+                    <ShoppingCart size={20} />
+                    <span>Project Cost</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="mobile-menu-divider"></div>
+
+              {/* Actions List */}
+              <div className="mobile-menu-section">
+                <div className="mobile-section-title">File & Layout Actions</div>
+                <div className="mobile-action-list">
+                  <button className="mobile-action-item" onClick={() => { handleSnapshot(); setShowMobileMenu(false); }}>
+                    <Camera size={16} />
+                    <span>Capture Snapshot (PNG)</span>
+                  </button>
+                  <button className="mobile-action-item" onClick={() => { handleShare(); setShowMobileMenu(false); }}>
+                    <Share2 size={16} />
+                    <span>Share Layout Link</span>
+                  </button>
+                  <button className="mobile-action-item" onClick={() => { handleExportPDF(); setShowMobileMenu(false); }}>
+                    <Printer size={16} />
+                    <span>Export to PDF</span>
+                  </button>
+                  <button className="mobile-action-item" onClick={() => { setIsEditingFloorName(true); setShowMobileMenu(false); }}>
+                    <Palette size={16} />
+                    <span>Rename Floor</span>
+                  </button>
+                  <button className="mobile-action-item danger" onClick={() => { handleClearRoom(); setShowMobileMenu(false); }}>
+                    <Trash2 size={16} />
+                    <span>Clear Room Elements</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="mobile-menu-divider"></div>
+
+              {/* Settings & Profile Section */}
+              <div className="mobile-menu-section">
+                <div className="mobile-section-title">Preferences & Profile</div>
+                <div className="mobile-action-list">
+                  <button className="mobile-action-item" onClick={() => { setShowSettingsModal(true); setShowMobileMenu(false); }}>
+                    <Settings size={16} />
+                    <span>Account Settings</span>
+                  </button>
+                  <button className="mobile-action-item" onClick={() => { setShowShortcutsModal(true); setShowMobileMenu(false); }}>
+                    <HelpCircle size={16} />
+                    <span>Keyboard Shortcuts</span>
+                  </button>
+                  <button className="mobile-action-item logout" onClick={() => { addToast('Logging out...', 'info'); setShowMobileMenu(false); }}>
+                    <ExternalLink size={16} />
+                    <span>Log Out ({userName})</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
